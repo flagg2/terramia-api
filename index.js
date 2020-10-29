@@ -41,7 +41,7 @@ app.use('*', (req,res,next) => {
     res.header('Access-Control-Allow-Headers' ,'Origin, Content-Type, X-Auth-Token')
     next()
 })
-app.use('/uploads',express.static('uploads/resized'))
+app.use('/uploads',express.static('./uploads'))
 //Route MiddleWares
 app.use('/api/auth', authRoute)
 app.use('/api/user', userRoute)

@@ -43,7 +43,7 @@ router.all('/profile', methods(['GET', 'PATCH']))
 router.get('/profile', verify(0), async (req, res) => {
     console.log(req.user)
     try {
-        const userInfo = await User.findById(req.user._id)
+        const userInfo = await User.findById(req.user._id).select('-password')
         if (!userInfo) throw {
             error: 'not-found',
             message: 'User with the provided id was not found'

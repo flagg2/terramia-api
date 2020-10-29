@@ -42,7 +42,8 @@ const newProductValidation = (req, res) => {
         name: Joi.string().max(100).required(),
         category: Joi.number().max(50),
         description: Joi.string().max(5000),
-        price: Joi.number().min(0).required()
+        price: Joi.number().min(0).required(),
+        eshop: Joi.boolean()
     })
     return validate(req, res, Joischema)
 }
@@ -53,7 +54,8 @@ const patchProductValidation = (req, res) => {
         name: Joi.string().max(100),
         category: Joi.number().max(50),
         description: Joi.string().max(5000),
-        price: Joi.number().min(0)
+        price: Joi.number().min(0),
+        eshop: Joi.boolean()
     })
     return validate(req, res, Joischema)
 }
@@ -85,7 +87,6 @@ const getFilteredOrdersValidation = (req, res) => {
         }),
         sortBy: Joi.object({
             value: Joi.number().valid(-1, 1),
-            totalSpent: Joi.number().valid(-1, 1)
         }),
         limit: Joi.number().min(0),
     })
@@ -117,10 +118,19 @@ const tempUserValidation = (req, res) => {
         phone: Joi.string().regex(/^[+]?[0-9]+$/).min(6).max(20).required(),
         address: Joi.string().max(50).required(),
         psc: Joi.string().min(3).max(10).required(),
-        country: Joi.string().min(6).max(30).required(),
+        country: Joi.string().max(30).required(),
         city: Joi.string().max(50).required(),
     })
     return validate(req, res, Joischema)
+}
+
+const idValidation = (req,res) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)){
+        return res.status(400).send({
+            message:'The id provided is in an invalid format',
+            error: 'format'
+        })
+    }
 }
 
 const createPaymentValidation = (req,res) => {
@@ -250,5 +260,6 @@ module.exports = {
     getFilteredProductsValidation,
     tempUserValidation,
     orderValidation,
-    createPaymentValidation
+    createPaymentValidation,
+    idValidation
 }

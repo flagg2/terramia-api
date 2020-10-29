@@ -9,6 +9,7 @@ const {notFound} = require('../utils/errors')
 const {resizeImage,unlinkIfRedundant} = require('../utils/files')
 const {
     newProductValidation,
+    idValidation,
     getFilteredProductsValidation,
     getFilteredUsersValidation,
     patchProductValidation,
@@ -22,7 +23,7 @@ const user = require('../model/user')
 
 //get list of all products
 router.all('/products', methods(['GET', 'POST']))
-router.get('/products', verify(2), async (req, res) => {
+router.get('/products', verify(1), async (req, res) => {
     try {
         const products = await Product.find()
         res.send({
@@ -37,7 +38,7 @@ router.get('/products', verify(2), async (req, res) => {
     }
 })
 
-router.post('/products', verify(2), async (req, res) => {
+router.post('/products', verify(1), async (req, res) => {
     if (getFilteredProductsValidation(req,res)) return
     try {
         const products = await Product.find(req.body.filters).limit(req.body.limit)
@@ -65,7 +66,7 @@ router.post('/products', verify(2), async (req, res) => {
 
 
 router.all('/products/:id/image', methods(['POST']))
-router.post('/products/:id/image', [verify(2), upload.single('productImage')], async (req, res) => {
+router.post('/products/:id/image', [verify(1), upload.single('productImage')], async (req, res) => {
     if (!req.file) {
         return res.status(400).send({
             message: 'The file provided was invalid',
@@ -87,16 +88,16 @@ router.post('/products/:id/image', [verify(2), upload.single('productImage')], a
         })
     } catch {
         unlinkIfRedundant(req.file.filename)
-        return res.status(404).send({
-            message: 'The product with the specified id could not be found',
-            error: 'not-found'
+        return res.status(400).send({
+            message: 'The id provided is in an invalid format',
+            error: 'format'
         })
     }
 })
 
 
 router.all('/products/create', methods(['POST']))
-router.post('/products/create', verify(2), async (req, res) => {
+router.post('/products/create', verify(1), async (req, res) => {
     if (newProductValidation(req, res)) return
     try {
         //check if it doesnt exist already
@@ -126,7 +127,8 @@ router.post('/products/create', verify(2), async (req, res) => {
 })
 
 router.all('/products/:id', methods(['GET', 'DELETE', 'PATCH']))
-router.get('/products/:id',verify(2), async (req, res) => {
+router.get('/products/:id',verify(1), async (req, res) => {
+    if (idValidation(req,res)) return
     try {
         const product = await Product.findById(req.params.id)
         if (!product) {
@@ -145,7 +147,8 @@ router.get('/products/:id',verify(2), async (req, res) => {
 })
 
 
-router.patch('/products/:id', verify(2), async (req,res) => {
+router.patch('/products/:id', verify(1), async (req,res) => {
+    if (idValidation(req,res)) return
     if (patchProductValidation(req, res)) return
     try{
         const product = await Product.findById(req.params.id)
@@ -169,7 +172,8 @@ router.patch('/products/:id', verify(2), async (req,res) => {
 })
 
 
-router.delete('/products/:id', verify(2), async (req, res) => {
+router.delete('/products/:id', verify(1), async (req, res) => {
+    if (idValidation(req,res)) return
     try {
         const product = await Product.findById(req.params.id)
         if (!product) {
@@ -177,7 +181,7 @@ router.delete('/products/:id', verify(2), async (req, res) => {
         }
         if (product.soldAmount > 0) {
             return res.status(400).send({
-                message: 'You tried to delete an item that has already been sold. Because this request might break the functionality of other api calls, it has been blocked',
+                message: 'You tried to delete an item that has already been sold. Because this request might break the functionality of other api calls, your request was blocked',
                 error: 'sold-amount-not-null'
             })
         }
@@ -194,7 +198,7 @@ router.delete('/products/:id', verify(2), async (req, res) => {
 })
 
 router.all('/orders',methods(['GET','POST']))
-router.get('/orders',verify(2), async (req,res) => {
+router.get('/orders',verify(1), async (req,res) => {
     try{
     const orders = await Order.find({})
     res.send({
@@ -208,7 +212,7 @@ router.get('/orders',verify(2), async (req,res) => {
     }
 })
 
-router.post('/orders',verify(2), async (req,res) => {
+router.post('/orders',verify(1), async (req,res) => {
     if (getFilteredOrdersValidation(req,res)) return
     try {
         const orders = await Order.find(req.body.filters).limit(req.body.limit).sort(req.body.sortBy)
@@ -226,7 +230,7 @@ router.post('/orders',verify(2), async (req,res) => {
 })
 
 router.all('/orders/:id',methods(['GET']))
-router.get('/orders/:id',verify(2),async (req,res) => {
+router.get('/orders/:id',verify(1),async (req,res) => {
     try{
         const order = await Order.findById(req.params.id)
         if (!order) return notFound(res,'Order')
@@ -243,7 +247,8 @@ router.get('/orders/:id',verify(2),async (req,res) => {
 })
 
 router.all('/orders/:id/fulfill',methods(['POST']))
-router.post('/orders/:id/fulfill',verify(2),async (req,res) => {
+router.post('/orders/:id/fulfill',verify(1),async (req,res) => {
+    if (idValidation(req,res)) return
     try{
         const order = await Order.findById(req.params.id)
         if (!order) return notFound(res,'Order')
@@ -264,9 +269,9 @@ router.post('/orders/:id/fulfill',verify(2),async (req,res) => {
 })
 
 router.all('/users', methods(['GET','POST']))
-router.get('/users',verify(2), async (req,res) => {
+router.get('/users',verify(1), async (req,res) => {
     try{
-        const users = await User.find({})
+        const users = await User.find({}).select('-password')
         res.send({
             message:'Users retrieved successfully',
             count:users.length,
@@ -280,10 +285,10 @@ router.get('/users',verify(2), async (req,res) => {
     }
 })
 
-router.post('/users', verify(2), async (req, res) => {
+router.post('/users', verify(1), async (req, res) => {
     if (getFilteredUsersValidation(req,res)) return
     try {
-        const users = await User.find(req.body.filters).limit(req.body.limit).sort(req.body.sortBy)
+        const users = await User.find(req.body.filters).limit(req.body.limit).sort(req.body.sortBy).select('-password')
         if (req.body.query){
             const searchResults = smartSearch(req.body.query,users,['name','email','phone'])
             return res.send({
@@ -306,9 +311,10 @@ router.post('/users', verify(2), async (req, res) => {
 })
 
 router.all('/users/:id',methods(['GET']))
-router.get('/users/:id',verify(2),async (req,res)=>{
+router.get('/users/:id',verify(1),async (req,res)=>{
+    if (idValidation(req,res)) return
     try{
-        const user = await User.findById(req.params.id)
+        const user = await User.findById(req.params.id).select('-password')
         if (!user) return notFound(res,'User')
         res.send({
             message:'User retrieved successfully',
@@ -323,9 +329,10 @@ router.get('/users/:id',verify(2),async (req,res)=>{
 })
 
 router.all('/users/:id/sendSample',methods(['POST']))
-router.post('/users/:id/sendSample',verify(2),async (req,res)=>{
+router.post('/users/:id/sendSample',verify(1),async (req,res)=>{
+    if (idValidation(req,res)) return
     try{
-        const user = await User.findById(req.params.id)
+        const user = await User.findById(req.params.id).select('-password')
         if (!user) return notFound(res,'User')
         if (user.sampleSent == true) return res.status(400).send({message:'Samples were already sent to the user with the provided id',error:'sent'})
         user.sampleSent = true
