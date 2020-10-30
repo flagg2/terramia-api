@@ -1,5 +1,5 @@
 const config = {
-    passwordResetLink : 'http://localhost:8080/reset'
+    passwordResetLink : 'https://www.google.com'
 }
 
 module.exports = config

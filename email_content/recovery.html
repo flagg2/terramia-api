@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+            .main-cont{
+                background-color: rgb(249, 235, 255);
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+            .cont{
+                margin:auto;
+                box-sizing: border-box;
+                width: 90%;
+                font-family: 'Open Sans', sans-serif;
+                max-width: 700px;
+                background-color: white;
+                padding: 40px;
+                border-radius: 10px;
+                border: 1px solid #cccccc;
+            }
+            .image{
+                display: block;
+                margin: auto;
+                max-width: 300px;
+                object-fit: contain;
+            }
+            .link{
+                display: block;
+                margin: 10px auto;
+                margin-top: 30px;
+                font-size: 16px;
+                text-decoration: none;
+                background-color: #A161B3;
+                color: white !important;
+                border-radius: 7px;
+                padding: 10px 20px;
+                max-width: 200px;
+                width: 80%;
+                text-align: center;
+                transition: all .3s;
+            }
+            .link:hover{
+                background-color: #834e92;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main-cont">
+        <div class="cont">
+            {{img logo.src logo.cls}}
+        <h1>Dobrý deň, {{name}}</h1>
+        <div><h3>Obdržali sme žiadosť o resetovanie hesla.</h3> Ak ste túto žiadosť neposlali Vy,
+             tento email môžete ignorovať. V opačom prípade kliknite na tlačidlo pod týmto textom
+            a vytvorte si nové heslo.</div>
+            {{link reset.text reset.url reset.cls}}
+
+        </div>
+    </div>
+    </body>
+</html>

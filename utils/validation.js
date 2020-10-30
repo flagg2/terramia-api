@@ -79,6 +79,13 @@ const getFilteredProductsValidation = (req, res) => {
     return validate(req, res, Joischema)
 }
 
+const requestSamplesValidation = (req,res) => {
+    const Joischema = Joi.object({
+        type: Joi.number().min(1).max(4).required()
+    })
+    return validate(req,res,Joischema)
+}
+
 const getFilteredOrdersValidation = (req, res) => {
     const Joischema = Joi.object({
         filters: Joi.object({
@@ -248,6 +255,7 @@ const patchProfileValidation = (req, res) => {
 }
 
 module.exports = {
+    requestSamplesValidation,
     getFilteredUsersValidation,
     registerValidation,
     getFilteredOrdersValidation,

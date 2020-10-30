@@ -18,15 +18,6 @@ mongoose.connect(process.env.DB_CONNECTION,{useNewUrlParser: true, useUnifiedTop
     console.log('Connected to db!')
 })
 
-const unless = function(path, middleware) {
-    return function(req, res, next) {
-        if (path === req.baseUrl) {
-            return next();
-        } else {
-            return middleware(req, res, next);
-        }
-    };
-};
 
 //Middlewares
 app.use(bodyParser.json({

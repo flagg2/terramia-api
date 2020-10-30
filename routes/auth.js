@@ -1,9 +1,8 @@
 const router = require('express').Router()
-const nodemailer = require('nodemailer')
+const {sendRecoveryMail} = require('../utils/mailer')
 const {
     required
 } = require('@hapi/joi')
-const config = require('../utils/config')
 const {
     notFound
 } = require('../utils/errors')
@@ -99,31 +98,6 @@ router.post('/login', async (req, res) => {
     })
 })
 
-//send mail
-const sendRecoveryMail = async (recieverAdress,user) => {
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL_ADDRESS,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    });
-    const link = `${config.passwordResetLink}?secret=${user.resetSecret}`
-    const mailOptions = {
-        from: process.env.EMAIL_ADDRESS,
-        to: recieverAdress,
-        subject: 'Forgotten password',
-        html: `<p>The link to reset your password is <a href="${link}">${link}</a></p>`
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error)
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
-}
 
 //send email because of forgotten password
 

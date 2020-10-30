@@ -8,7 +8,8 @@ const {
 } = require('@hapi/joi')
 const {
     patchProfileValidation,
-    changePasswordValidation
+    changePasswordValidation,
+    requestSamplesValidation
 } = require('../utils/validation')
 
 const router = require('express').Router()
@@ -38,10 +39,31 @@ router.get('/orders', verify(0), async (req, res) => {
 })
 
 //get info about the user
+router.all('/requestSamples', methods(['POST']))
+router.post('/requestSamples', verify(0), async (req,res) => {
+    if (requestSamplesValidation(req,res)) return
+    try{
+        const user = await User.findById(req.user._id)
+        if (user.sampleSent) return res.status(400).send({
+            message:'Samples have already been sent to this user',
+            error: 'already-sent'
+        })
+        user.sampleType = req.body.type
+        await user.save()
+        res.send({
+            message:'Samples requested successfully'
+        })
+    }
+    catch (err){
+        res.status(500).send({
+            message:'An unexpected error has occured',
+            error:err
+        })
+    }
+})
 
 router.all('/profile', methods(['GET', 'PATCH']))
 router.get('/profile', verify(0), async (req, res) => {
-    console.log(req.user)
     try {
         const userInfo = await User.findById(req.user._id).select('-password')
         if (!userInfo) throw {

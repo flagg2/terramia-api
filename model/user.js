@@ -67,6 +67,12 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    sampleType:{
+        type: Number,
+        default: 0,
+        min:0,
+        max:4
+    },
     resetSecret:{
         type: String
     }
