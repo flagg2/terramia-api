@@ -46,6 +46,10 @@ const orderSchema = new mongoose.Schema({
             min: 6,
             max: 30
         }
+    },
+    coupon:{
+        type:String,
+        max:20
     }
 })
 

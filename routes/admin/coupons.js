@@ -4,7 +4,7 @@ const Coupon = require('../../model/coupon')
 const {
     createCouponValidation, idValidation
 } = require('../../utils/validation')
-const {serverError} = require('../../utils/errors')
+const {serverError, notFound} = require('../../utils/errors')
 
 module.exports = (router) => {
     router.all('/coupons/create', methods(['POST']))
@@ -57,5 +57,30 @@ module.exports = (router) => {
     router.all('/coupons/:id', methods(['GET','DELETE']))
     router.get('/coupons/:id', verify(1), async (req,res) => {
         if (idValidation(req,res)) return
+        try{
+            const coupon = await Coupon.findById(req.params.id)
+            if (!coupon) return notFound(res,'Coupon')
+            res.send({
+                message:'Coupon retrieved successfully',
+                coupon: coupon
+            })
+        }
+        catch(err){
+            serverError(res,err)
+        }
+    })
+    
+    router.delete('/coupons/:id', verify(1), async (req,res) => {
+        if (idValidation(req,res)) return
+        try{
+            const coupon = await Coupon.findByIdAndDelete(req.params.id, () => {})
+            if (!coupon) return notFound(res,'Coupon')
+            res.send({
+                message: 'Deleted successfully'
+            }) 
+        }
+        catch(err){
+            serverError(res,err)
+        }
     })
 }

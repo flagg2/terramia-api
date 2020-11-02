@@ -7,9 +7,11 @@ const {
     idValidation,
     orderValidation
 } = require('../../utils/validation')
+const {validateCoupon} = require('../../utils/orderHelpers')
 const {
-    notFound
+    notFound, serverError
 } = require('../../utils/errors')
+
 
 module.exports = (router) => {
     router.all('/order', methods(['POST']))
@@ -25,6 +27,8 @@ module.exports = (router) => {
             }
             const user = await User.findById(req.body.userId)
             if (!user) notFound(res, 'User')
+
+            //are all billing details provided?
             const required = ['city', 'psc', 'address', 'country']
             const notSatisfied = []
             required.forEach(requirement => {
@@ -35,6 +39,8 @@ module.exports = (router) => {
                 message: 'Some of the billing details of this user have not yet been defined',
                 missing: notSatisfied.join(', ')
             })
+
+            //are all product ids valid?
             for (const product in req.body.products) {
                 console.log(req.body.products[product])
                 if (!await Product.findById(req.body.products[product])) return res.status(404).send({
@@ -42,10 +48,14 @@ module.exports = (router) => {
                     message: 'One or more product ids provided were invalid'
                 })
             }
+
             const order = new Order({
                 ...req.body,
                 orderedBy: req.body.userId
             })
+            //apply coupons
+            if (await validateCoupon(order,res)) return
+            
             const savedOrder = await order.save()
             user.orders.push(savedOrder._id)
             user.markModified('orders')
@@ -55,10 +65,7 @@ module.exports = (router) => {
                 orderId: savedOrder._id
             })
         } catch (err) {
-            res.status(400).send({
-                error: err,
-                message: 'An unknown error has occured'
-            })
+            serverError(res,err)
         }
     })
 

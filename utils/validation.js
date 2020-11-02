@@ -164,7 +164,8 @@ const orderValidation = (req, res) => {
             psc: Joi.string().min(3).max(10),
             country: Joi.string().min(6).max(30),
             city: Joi.string().max(50),
-        })
+        }),
+        coupon: Joi.string().max(20)
     })
     try {
         if (!mongoose.Types.ObjectId.isValid(req.body.userId)) {
@@ -260,7 +261,9 @@ const createCouponValidation = (req,res) => {
         code: Joi.string().max(20).required(),
         type: Joi.string().valid('flat','percentage').required(),
         value: Joi.number().min(0).required(),
-        maxUses: Joi.number().min(0)
+        maxUses: Joi.number().min(0),
+        minValue: Joi.number().min(0),
+        maxUsesTotal: Joi.number().min(0)
     })
 
     return validate(req,res,Joischema)
