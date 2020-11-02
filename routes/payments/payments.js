@@ -1,16 +1,11 @@
 const router = require('express').Router()
-const methods = require('../middlewares/methods')
-const Product = require('../model/product')
-const bodyParser = require('body-parser')
-const Order = require('../model/order')
+const methods = require('../../middlewares/methods')
+const Product = require('../../model/product')
+const Order = require('../../model/order')
 const {
 	createPaymentValidation
-} = require('../utils/validation')
-const User = require('../model/user')
-const verify = require('../middlewares/verifyToken')
-const {
-	create
-} = require('../model/user')
+} = require('../../utils/validation')
+const User = require('../../model/user')
 const stripe = require("stripe")("sk_test_51Hc5rMFGDIXHKcdbWSCiO0wJGIK2a4i5WUmM0OSoehT2wouQSxGQSudTSOqSqflMnEc2OIZ8ts8UZOQncppE0gbS00J5oUWHnc");
 
 const calculateOrderAmount = products => {

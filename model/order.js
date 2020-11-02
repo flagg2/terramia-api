@@ -26,8 +26,27 @@ const orderSchema = new mongoose.Schema({
     clientSecret:{
         type:String,
         default:'none'
+    },
+    overwrite:{
+        address: {
+            type: String,
+            max: 50
+        },
+        city: {
+            type: String,
+            max: 50
+        },
+        psc: {
+            type: String,
+            min: 4,
+            max: 10
+        },
+        country: {
+            type: String,
+            min: 6,
+            max: 30
+        }
     }
-    //TODO add stripe checkout session id
 })
 
 

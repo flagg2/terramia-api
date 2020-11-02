@@ -1,16 +1,14 @@
-const verify = require('../middlewares/verifyToken')
-const methods = require('../middlewares/methods')
-const User = require('../model/user')
-const Order = require('../model/order')
+const verify = require('../../middlewares/verifyToken')
+const methods = require('../../middlewares/methods')
+const User = require('../../model/user')
+const Order = require('../../model/order')
 const bcrypt = require('bcryptjs')
-const {
-    x
-} = require('@hapi/joi')
+const {serverError} = require('../../utils/errors')
 const {
     patchProfileValidation,
     changePasswordValidation,
     requestSamplesValidation
-} = require('../utils/validation')
+} = require('../../utils/validation')
 
 const router = require('express').Router()
 
@@ -55,10 +53,7 @@ router.post('/requestSamples', verify(0), async (req,res) => {
         })
     }
     catch (err){
-        res.status(500).send({
-            message:'An unexpected error has occured',
-            error:err
-        })
+        serverError(res,err)
     }
 })
 

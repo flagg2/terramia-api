@@ -1,8 +1,5 @@
 const Joi = require('@hapi/joi')
 const mongoose = require('mongoose')
-const {
-    patch
-} = require('../routes/auth')
 const passwordValidator = require('password-validator')
 
 const validate = (req, res, Joischema) => {
@@ -161,7 +158,13 @@ const createPaymentValidation = (req,res) => {
 const orderValidation = (req, res) => {
     const Joischema = Joi.object({
         userId: Joi.string().required(),
-        products: Joi.array().items(Joi.string()).required()
+        products: Joi.array().items(Joi.string()).required(),
+        overwrite: Joi.object({
+            address: Joi.string().max(50),
+            psc: Joi.string().min(3).max(10),
+            country: Joi.string().min(6).max(30),
+            city: Joi.string().max(50),
+        })
     })
     try {
         if (!mongoose.Types.ObjectId.isValid(req.body.userId)) {
@@ -187,7 +190,6 @@ const orderValidation = (req, res) => {
     return validate(req, res, Joischema)
 }
 
-//Register validation
 const registerValidation = (req, res) => {
     const Joischema = Joi.object({
         name: Joi.string().min(6).max(50).required(),
@@ -206,8 +208,6 @@ const registerValidation = (req, res) => {
     }
     return validate(req, res, Joischema)
 }
-
-//Login validation
 
 const loginValidation = (req, res) => {
     const Joischema = Joi.object({
@@ -247,11 +247,23 @@ const patchProfileValidation = (req, res) => {
         password: Joi.string().min(8).max(1024),
         phone: Joi.string().regex(/^[+]?[0-9]+$/).min(6).max(20),
         address: Joi.string().max(50),
-        psc: Joi.number().min(3).max(10),
+        psc: Joi.string().min(3).max(10),
         city: Joi.string().max(50),
+        country: Joi.string().max(50)
 
     })
     return validate(req, res, Joischema)
+}
+
+const createCouponValidation = (req,res) => {
+    const Joischema = Joi.object({
+        code: Joi.string().max(20).required(),
+        type: Joi.string().valid('flat','percentage').required(),
+        value: Joi.number().min(0).required(),
+        maxUses: Joi.number().min(0)
+    })
+
+    return validate(req,res,Joischema)
 }
 
 module.exports = {
@@ -269,5 +281,6 @@ module.exports = {
     tempUserValidation,
     orderValidation,
     createPaymentValidation,
-    idValidation
+    idValidation,
+    createCouponValidation
 }

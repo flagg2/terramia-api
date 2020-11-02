@@ -16,7 +16,7 @@ const unlinkIfRedundant = function (path) {
 
 const resizeImage = async function (link) {
     sharp(`./uploads/${link}`)
-        .resize(300)
+        .resize(parseInt(process.env.RESIZED_IMAGE_SIZE))
         .toFile(`./uploads/resized/${link}`, function (err) {
             console.log(err)
         });

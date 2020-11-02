@@ -5,12 +5,12 @@ const mongoose = require('mongoose')
 require('dotenv/config')
 
 //Import Routes
-const authRoute = require('./routes/auth')
-const userRoute = require('./routes/user')
-const adminRoute = require('./routes/admin')
-const notFoundRoute = require('./routes/notfound')
-const storeRoute = require('./routes/store')
-const paymentRoute = require('./routes/payments')
+const authRoute = require('./routes/auth/auth')
+const userRoute = require('./routes/user/user')
+const adminRoute = require('./routes/admin/admin')
+const notFoundRoute = require('./routes/notfound/notfound')
+const storeRoute = require('./routes/store/store')
+const paymentRoute = require('./routes/payments/payments')
 
 
 //Connect to DB

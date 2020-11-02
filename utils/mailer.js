@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer')
-const config = require('../utils/config')
 const fs = require('fs')
 const handlebars = require('handlebars')
 
@@ -35,7 +34,7 @@ const sendRecoveryMail = async (recieverAdress,user) => {
         }
     });
     const logoId = 'terramia_logo'
-    const link = `${config.passwordResetLink}?secret=${user.resetSecret}`
+    const link = `${process.env.PASSWORD_RESET_LINK}?secret=${user.resetSecret}`
     readHTMLFile('./email_content/recovery.html', function (err, html) {
         var template = handlebars.compile(html);
         var replacements = {

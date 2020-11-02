@@ -1,21 +1,18 @@
 const router = require('express').Router()
-const {sendRecoveryMail} = require('../utils/mailer')
-const {
-    required
-} = require('@hapi/joi')
+const {sendRecoveryMail} = require('../../utils/mailer')
+const {serverError} = require('../../utils/errors')
 const {
     notFound
-} = require('../utils/errors')
-const User = require('../model/user')
+} = require('../../utils/errors')
+const User = require('../../model/user')
 const {
     registerValidation,
     loginValidation,
-    changePasswordValidation,
     resetPasswordValidation
-} = require('../utils/validation')
+} = require('../../utils/validation')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const methods = require('../middlewares/methods')
+const methods = require('../../middlewares/methods')
 const crypto = require('crypto')
 
 //register user
@@ -116,7 +113,7 @@ router.post('/forgot', async (req, res) => {
         })
 
     } catch (err) {
-        res.status(500).send(err)
+        serverError(res,err)
     }
 })
 
@@ -137,9 +134,7 @@ router.post('/reset', async (req,res)=>{
         })
     }
     catch(err){
-        res.status(500).send({
-            message: err
-        })
+        serverError(res,err)
     }
 })
 
