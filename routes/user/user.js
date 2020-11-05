@@ -81,27 +81,28 @@ router.patch('/profile', verify(0), async (req, res) => {
     if (patchProfileValidation(req, res)) return
 
     //properties ktore je mozne zmenit 
-    const props = {
-        a: 'name',
-        b: 'email',
-        c: 'phone',
-        d: 'address',
-        e: 'city',
-        f: 'psc',
-        g: 'country'
-    }
+    const props = [
+         'name',
+         'email',
+         'phone',
+         'address',
+         'city',
+         'psc',
+         'country'
+    ]
     try {
+        //TODO fix doesnt work
         //update user
         const user = await User.findById(req.user._id)
-        for (const propk in props) {
-            const prop = props[propk]
+        for (const prop of props) {
             //TODO zmenit eval na zatvorkovu notaciu
             if (eval(`req.body.${prop} !== undefined`)) {
                 //check if email exists
                 if (prop == 'email') {
-                    if (await User.findOne({
-                            email: req.body.email
-                        })) {
+                    const userByReq = await User.findOne({
+                        email: req.body.email
+                    })
+                    if (userByReq && userByReq.email != user.email) {
                         return res.status(409).send({
                             message: 'Email already exists',
                             type: 'email',
@@ -111,9 +112,10 @@ router.patch('/profile', verify(0), async (req, res) => {
                 }
                 //check if phone exists
                 else if (prop == 'phone') {
-                    if (await User.findOne({
-                            phone: req.body.phone
-                        })) {
+                    const userByReq = await User.findOne({
+                        phone: req.body.phone
+                    })
+                    if (userByReq && userByReq.phone != user.phone) {
                         return res.status(409).send({
                             message: 'Phone number already exists',
                             type: 'phone',
@@ -124,12 +126,12 @@ router.patch('/profile', verify(0), async (req, res) => {
                 eval(`user.${prop} = req.body.${prop}`)
             }
         }
-        user.save()
+        await user.save()
         res.send({
             message: 'Records updated successfully'
         })
     } catch (err) {
-        res.status(400).send(err)
+        serverError(res,err)
     }
 })
 

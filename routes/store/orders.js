@@ -7,6 +7,7 @@ const {
     idValidation,
     orderValidation
 } = require('../../utils/validation')
+const {sendOrderCompletedEmail} = require('../../utils/mailer')
 const {validateCoupon} = require('../../utils/orderHelpers')
 const {
     notFound, serverError
@@ -80,6 +81,9 @@ module.exports = (router) => {
         if (idValidation(req, res)) return
         try {
             const order = await Order.findById(req.params.id)
+            //TODO temporary testing remove later
+            const user = await User.findById(order.orderedBy)
+            sendOrderCompletedEmail(user.email, order)
             if (!order) throw new Error
             res.send({
                 message: 'The order was retrieved successfully',
