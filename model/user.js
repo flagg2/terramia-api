@@ -75,7 +75,12 @@ const userSchema = new mongoose.Schema({
     },
     resetSecret:{
         type: String
-    }
-})
+    },
+    watchList: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+    }],
+    boughtProducts:{ type: mongoose.Schema.Types.Mixed, default: {} }
+}, { minimize: false })
 
 module.exports = mongoose.model('User',userSchema)

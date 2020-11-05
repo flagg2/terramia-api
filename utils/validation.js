@@ -40,7 +40,8 @@ const newProductValidation = (req, res) => {
         category: Joi.number().max(50),
         description: Joi.string().max(5000),
         price: Joi.number().min(0).required(),
-        eshop: Joi.boolean()
+        eshop: Joi.boolean(),
+        available: Joi.boolean()
     })
     return validate(req, res, Joischema)
 }
@@ -52,7 +53,8 @@ const patchProductValidation = (req, res) => {
         category: Joi.number().max(50),
         description: Joi.string().max(5000),
         price: Joi.number().min(0),
-        eshop: Joi.boolean()
+        eshop: Joi.boolean(),
+        available: Joi.boolean()
     })
     return validate(req, res, Joischema)
 }
@@ -62,7 +64,8 @@ const getFilteredProductsValidation = (req, res) => {
         filters: Joi.object({
             category: Joi.number().max(50),
             name: Joi.string().max(100),
-            type: Joi.number().min(1).max(16)
+            type: Joi.number().min(1).max(16),
+            available: Joi.boolean()
         }),
         sortBy: Joi.object({
             price: Joi.number().valid(-1, 1),
@@ -220,6 +223,7 @@ const loginValidation = (req, res) => {
 
 const changePasswordValidation = (req, res) => {
     const Joischema = Joi.object({
+        oldPassword: Joi.string().min(8).max(1024).required(),
         password: Joi.string().min(8).max(1024).required()
     })
     const passwordError = validatePassword(req.body.password)

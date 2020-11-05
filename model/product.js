@@ -38,12 +38,18 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    available: {
+        type: Boolean,
+        default: true
+    },
     eshop: {
         type: Boolean,
         default: true
-    }
+    },
+    boughtTogether : { type: mongoose.Schema.Types.Mixed, default: {} }
+}
 
-})
+, { minimize: false })
 
 module.exports = mongoose.model('Product',productSchema)
 

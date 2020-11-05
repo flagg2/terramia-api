@@ -43,9 +43,15 @@ module.exports = (router) => {
             //are all product ids valid?
             for (const product in req.body.products) {
                 console.log(req.body.products[product])
-                if (!await Product.findById(req.body.products[product])) return res.status(404).send({
+                const prod = await Product.findById(req.body.products[product])
+                if (!prod) return res.status(404).send({
                     error: 'not-found',
                     message: 'One or more product ids provided were invalid'
+                })
+                // is product available
+                if (!prod.available) return res.status(400).send({
+                    error:'not-available',
+                    message: 'One or more of the requested products were unavailable'
                 })
             }
 

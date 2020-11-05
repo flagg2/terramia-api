@@ -140,6 +140,13 @@ router.post('/password', verify(0), async (req, res) => {
     const hashPassword = await bcrypt.hash(req.body.password, salt)
     try {
         const user = await User.findById(req.user._id)
+        const validPass = await bcrypt.compare(req.body.oldPassword, user.password)
+        if (!validPass){
+            res.status(400).send({
+            message:'The old password provided is invalid',
+            error:'invalid-password'
+            })
+        }
         user.password = hashPassword
         user.save()
         res.send({

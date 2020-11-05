@@ -1,11 +1,13 @@
 const methods = require('../../middlewares/methods')
 const {serverError,notFound} = require('../../utils/errors')
 const Product = require('../../model/product')
+const User  = require('../../model/user')
 const smartSearch = require('../../utils/smartSearch')
 const {
     getFilteredProductsValidation,
     idValidation
 } = require('../../utils/validation')
+const verify  = require('../../middlewares/verifyToken')
 
 
 module.exports = (router) => {
@@ -67,6 +69,25 @@ module.exports = (router) => {
             })
         } catch (err) {
            notFound(res,'Product')
+        }
+    })
+
+    router.all('/products/:id/watch', methods(['POST']))
+    router.post('/products/:id/watch', verify(0), async(req,res)=> {
+        if (idValidation(req,res)) return
+        try{
+        const user = await User.findById(req.user._id)
+        const product = await Product.findById(req.params.id)
+        if (!product) return notFound(res,'Product')
+        user.watchList.push(product._id)
+        user.markModified('watchList')
+        await user.save()
+        res.send({
+            message:'Item added to watchlist successfully'
+        })
+        }
+        catch (err){
+            serverError(res,err)
         }
     })
 }
