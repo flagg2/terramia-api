@@ -2,7 +2,10 @@ const nodemailer = require('nodemailer')
 const fs = require('fs')
 const handlebars = require('handlebars');
 const user = require('../model/user');
+const Coupon = require('../model/coupon')
 const Order = require('../model/order')
+const Product = require('../model/product')
+const logoId = 'terramia_logo'
 
 handlebars.registerHelper("link", function(text, url, cls) {
     var url = handlebars.escapeExpression(url),
@@ -15,11 +18,6 @@ handlebars.registerHelper("img", function(src, cls) {
     var src = handlebars.escapeExpression(src)
    return new handlebars.SafeString(`<img class=${cls} src="cid:${src}">`);
 });
-
-handlebars.registerHelper('products', async function(order){
-    const ord = await Order.findById(order)
-    return new handlebars.SafeString(`<div>${ord._id}</div>`)
-})
 
 var readHTMLFile = (path, callback) => {
     fs.readFile(path, { encoding: 'utf-8' }, function (err, html) {
@@ -40,7 +38,6 @@ const sendRecoveryMail = async (recieverAdress,user) => {
             pass: process.env.EMAIL_PASSWORD
         }
     });
-    const logoId = 'terramia_logo'
     const link = `${process.env.PASSWORD_RESET_LINK}?secret=${user.resetSecret}`
     readHTMLFile('./email_content/recovery.html', function (err, html) {
         var template = handlebars.compile(html);
@@ -80,6 +77,88 @@ const sendRecoveryMail = async (recieverAdress,user) => {
 
 //todo fix grammar receive
 const sendOrderCompletedEmail = async (recieverAdress, order) => {
+    const ord = await Order.findById(order)
+    const quants = new Object()
+    const products = []
+    for (const prod of ord.products){
+        if (quants[prod]) quants[prod] += 1
+        else quants[prod] = 1
+    }
+    for (const key in quants){
+        const quantity = quants[key]
+        products.push(await Product.findById(key),quantity)
+    }
+    let placeholder = false
+    let orderSum = 0
+    const attachments = [{
+        filename: 'logo.png',
+        path: './email_content/logo.png',
+        cid: `${logoId}`
+    }]
+    console.log(quants)
+    let string = `<div>
+                    <table class='products'>
+                    <tr class='underline'>
+                        <td class='name-h'>Produkt</td>
+                        <td></td>
+                        <td>Kusov</td>
+                        <td>Cena s DPH</td>
+                    </tr>`
+    //TODO pridat case ked nieje obrazok
+    for (const [index,product] of products.entries()){
+        let imageHtml = ''
+        if (index%2 == 1) continue
+        orderSum += product.price*products[index+1]
+        if (product.imagePath){
+        attachments.push({
+            filename: `${product.imagePath}`,
+            path:`./uploads/resized/${product.imagePath}`,
+            cid: `img${index/2}`
+        })
+        imageHtml = `<td class="productImg"><img src="cid:img${index/2}"></td>`
+        }
+        else {
+            if (!placeholder){
+                attachments.push({
+                    filename: `placeholder.png`,
+                    path:`./email_content/placeholder.png`,
+                    cid: `placeholder`
+                })
+                placeholder = true
+            }
+            imageHtml = `<td class="productImg"><img src="cid:placeholder"></td>` 
+        }
+        string +=   `
+                        <tr>
+                        ${imageHtml}
+                        <td class="productName">${product.name}</td>
+                        <td class="productQuant">${products[index+1]}</td>
+                        <td class="productPrice">${product.price/100*products[index+1]}€</td>
+                        </tr>`
+    }
+    string+='</table></div>'
+    const coupon = await Coupon.findOne({code:ord.coupon})
+    handlebars.registerHelper('products', function(){
+        return new handlebars.SafeString(string)
+    })
+    const discString = coupon ? `    
+                            <tr class='disc'>
+                                <td class="total-sum">Suma pred zľavou</td>
+                                <td class="total-price">${orderSum/100}€</td>
+                            </tr>
+                     
+                            <tr>
+                                <td class="total-sum">Zľava</td>
+                                <td class="total-price">${coupon.value}${coupon.type=='percentage' ? '%' : '€'}</td>
+                            </tr>`
+                            :
+                            ''
+    handlebars.registerHelper('discount', function(){
+        if (ord.coupon){
+            return new handlebars.SafeString(discString)
+        }
+        else return
+    })
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -87,15 +166,15 @@ const sendOrderCompletedEmail = async (recieverAdress, order) => {
             pass: process.env.EMAIL_PASSWORD
         }
     });
-    const logoId = 'terramia_logo'
     readHTMLFile('./email_content/order.html', function (err, html) {
         var template = handlebars.compile(html);
+        console.log(ord.value)
         var replacements = {
             logo:{
                 src:logoId,
                 cls:'image'
             },
-            order: order
+            orderSum : parseInt(ord.value)/100
         };
         var htmlToSend = template(replacements);
     const mailOptions = {
@@ -103,11 +182,7 @@ const sendOrderCompletedEmail = async (recieverAdress, order) => {
         to: recieverAdress,
         subject: 'Nová objednávka',
         html: htmlToSend,
-        attachments: [{
-            filename: 'logo.png',
-            path: './email_content/logo.png',
-            cid: `${logoId}`
-        }]
+        attachments: attachments
     };
 
     transporter.sendMail(mailOptions, function (error, info) {

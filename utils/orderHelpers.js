@@ -2,6 +2,7 @@ const User = require('../model/user')
 const Product = require('../model/product')
 const Coupon = require('../model/coupon')
 const {serverError} = require('./errors');
+const {sendOrderCompletedEmail} = require('./mailer')
 
 const calculateOrderAmount = async (order, ignoreCoupon = false) => {
     try {
@@ -14,7 +15,7 @@ const calculateOrderAmount = async (order, ignoreCoupon = false) => {
         const coupon = await Coupon.findOne({
             code: order.coupon
         })
-        console.log(coupon)
+        console.log(totalPrice)
         if (coupon && !ignoreCoupon) {
             if (coupon.type == 'flat') {
                 totalPrice -= parseInt(coupon.value)
@@ -24,6 +25,7 @@ const calculateOrderAmount = async (order, ignoreCoupon = false) => {
                 console.log(totalPrice)
             }
         }
+        console.log(totalPrice)
         return totalPrice < 0 ? 0 : totalPrice;
     } catch (err) {
         console.log(err)
@@ -98,7 +100,7 @@ const updateSimilarProducts = async (lastProduct, user) => {
         }
         else {
             if (lastProduct.boughtTogether[prop]){
-                lastProduct.boughtTogether[prop]+=0.5**boughtSoFar
+                lastProduct.boughtTogether[prop]+=0.8**boughtSoFar
             }
             else {
                 lastProduct.boughtTogether[prop]=1
@@ -145,6 +147,7 @@ const finishOrder = async (order, res) => {
             coupon.markModified('redeems')
             await coupon.save()
         }
+        sendOrderCompletedEmail(user.email, order)
         await user.save()
         await order.save()
         return res.send()

@@ -8,7 +8,7 @@ const {
 const User = require('../../model/user')
 const { serverError } = require('../../utils/errors')
 const { validateCoupon,calculateOrderAmount,finishOrder } = require('../../utils/orderHelpers')
-const stripe = require("stripe")("sk_test_51Hc5rMFGDIXHKcdbWSCiO0wJGIK2a4i5WUmM0OSoehT2wouQSxGQSudTSOqSqflMnEc2OIZ8ts8UZOQncppE0gbS00J5oUWHnc");
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 router.all('/webhook', methods(['POST']))
 router.post('/webhook', async (req, res) => {
