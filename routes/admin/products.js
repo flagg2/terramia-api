@@ -106,7 +106,8 @@ module.exports = (router) => {
             })
             product.save()
             res.send({
-                success: 'New product created successfully'
+                success: 'New product created successfully',
+                product : product
             })
         } catch (err) {
             res.status(400).send(err)

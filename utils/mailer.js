@@ -30,6 +30,46 @@ var readHTMLFile = (path, callback) => {
     })
   }
 
+const sendWelcomeEmail = async (recieverAdress, user) => {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_ADDRESS,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+    const link = `${process.env.PASSWORD_RESET_LINK}?secret=${user.resetSecret}`
+    readHTMLFile('./email_content/recovery.html', function (err, html) {
+        var template = handlebars.compile(html);
+        var replacements = {
+            logo:{
+                src:logoId,
+                cls:'image'
+            },
+            name: user.name.split(' ')[0],
+        };
+        var htmlToSend = template(replacements);
+    const mailOptions = {
+        from: process.env.EMAIL_ADDRESS,
+        to: recieverAdress,
+        subject: 'Zabudnuté heslo',
+        html: htmlToSend,
+        attachments: [{
+            filename: 'logo.png',
+            path: './email_content/logo.png',
+            cid: `${logoId}`
+        }]
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error)
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+})}
+
 const sendRecoveryMail = async (recieverAdress,user) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -104,7 +144,6 @@ const sendOrderCompletedEmail = async (recieverAdress, order) => {
                         <td>Kusov</td>
                         <td>Cena s DPH</td>
                     </tr>`
-    //TODO pridat case ked nieje obrazok
     for (const [index,product] of products.entries()){
         let imageHtml = ''
         if (index%2 == 1) continue
