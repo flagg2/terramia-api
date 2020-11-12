@@ -32,6 +32,7 @@ router.post('/register', async (req, res) => {
     }
 
     //check if phone exists
+    if(req.body.phone){
     if (await User.findOne({
             phone: req.body.phone
         })) {
@@ -40,7 +41,7 @@ router.post('/register', async (req, res) => {
             type: 'phone',
             error: 'exists'
         })
-    }
+    }}
 
     //hash passwords
     const salt = await bcrypt.genSalt(10)

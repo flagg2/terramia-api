@@ -196,10 +196,11 @@ const orderValidation = (req, res) => {
 
 const registerValidation = (req, res) => {
     const Joischema = Joi.object({
-        name: Joi.string().min(6).max(50).required(),
+        //TODO add fail cases to when user has no name/phone when they are creating an order
+        name: Joi.string().min(6).max(50),
         email: Joi.string().min(6).max(255).required().email(),
         password: Joi.string().min(6).max(1024).required(),
-        phone: Joi.string().regex(/^[+]?[0-9]+$/).min(6).max(20).required(),
+        phone: Joi.string().regex(/^[+]?[0-9]+$/).min(6).max(20),
         address: Joi.string().max(50),
         psc: Joi.string().min(3).max(10),
         country: Joi.string().min(6).max(30),
