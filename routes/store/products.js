@@ -79,7 +79,7 @@ module.exports = (router) => {
         }
     })
 
-    //TODO add fail cases
+    //REDUNDAND for terramia
     router.all('/products/:id/watch', methods(['POST']))
     router.post('/products/:id/watch', verify(0), async (req, res) => {
         if (idValidation(req, res)) return

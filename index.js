@@ -2,7 +2,8 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-require('./cron_jobs/checkAvailable')
+//REDUNDAND for terramia
+//require('./cron_jobs/checkAvailable')
 require('dotenv/config')
 
 //Import Routes
@@ -26,6 +27,20 @@ app.use(bodyParser.json({
       req.rawBody = buf
     }
   }))
+
+//is json valid?
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+      console.error(err);
+      return res.status(400).send({
+        message:'Syntax of provided body is invalid',
+        error:'invalid-syntax'
+      })
+  }
+
+  next();
+});
+
 //cors
 app.use('*', (req,res,next) => {
     res.header('Access-Control-Allow-Origin',"*")

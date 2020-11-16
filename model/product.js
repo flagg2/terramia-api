@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 const productSchema = new mongoose.Schema({
     type: {
-        //TODO doklepnut potom tuto strukturu typov a kategorii
         type: Number,
         required: true,
         min: 1,

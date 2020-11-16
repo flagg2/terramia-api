@@ -44,7 +44,7 @@ var readHTMLFile = (path, callback) => {
     })
 }
 
-const sendWelcomeEmail = async (recieverAdress, user) => {
+const sendWelcomeEmail = async (receiverAdress, user) => {
     const transporter = createTransport()
     const link = `${process.env.PASSWORD_RESET_LINK}?secret=${user.resetSecret}`
     readHTMLFile('./email_content/recovery.html', function (err, html) {
@@ -59,7 +59,7 @@ const sendWelcomeEmail = async (recieverAdress, user) => {
         var htmlToSend = template(replacements);
         const mailOptions = {
             from: process.env.EMAIL_ADDRESS,
-            to: recieverAdress,
+            to: receiverAdress,
             subject: 'Zabudnuté heslo',
             html: htmlToSend,
             attachments: [{
@@ -79,7 +79,7 @@ const sendWelcomeEmail = async (recieverAdress, user) => {
     })
 }
 
-const sendRecoveryMail = async (recieverAdress, user) => {
+const sendRecoveryMail = async (receiverAdress, user) => {
     const transporter = createTransport()
     const link = `${process.env.PASSWORD_RESET_LINK}?secret=${user.resetSecret}`
     readHTMLFile('./email_content/recovery.html', function (err, html) {
@@ -99,7 +99,7 @@ const sendRecoveryMail = async (recieverAdress, user) => {
         var htmlToSend = template(replacements);
         const mailOptions = {
             from: process.env.EMAIL_ADDRESS,
-            to: recieverAdress,
+            to: receiverAdress,
             subject: 'Zabudnuté heslo',
             html: htmlToSend,
             attachments: [{
@@ -119,8 +119,7 @@ const sendRecoveryMail = async (recieverAdress, user) => {
     })
 }
 
-//todo fix grammar receive
-const sendOrderCompletedEmail = async (recieverAdress, order) => {
+const sendOrderCompletedEmail = async (receiverAdress, order) => {
     const ord = await Order.findById(order)
     const quants = new Object()
     const products = []
@@ -215,7 +214,7 @@ const sendOrderCompletedEmail = async (recieverAdress, order) => {
         var htmlToSend = template(replacements);
         const mailOptions = {
             from: process.env.EMAIL_ADDRESS,
-            to: recieverAdress,
+            to: receiverAdress,
             subject: 'Nová objednávka',
             html: htmlToSend,
             attachments: attachments
