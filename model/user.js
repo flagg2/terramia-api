@@ -67,18 +67,25 @@ const userSchema = new mongoose.Schema({
     },
     sampleType:{
         type: Number,
-        default: 0,
-        min:0,
-        max:4
+        required: true,
+        min:1,
+        max:5
     },
     resetSecret:{
+        type: String
+    },
+    registrationCode:{
         type: String
     },
     watchList: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product'
     }],
-    boughtProducts:{ type: mongoose.Schema.Types.Mixed, default: {} }
+    boughtProducts:{ type: mongoose.Schema.Types.Mixed, default: {} },
+    knowDoTerra:{
+        type: Boolean,
+        required: true
+    }
 }, { minimize: false })
 
 module.exports = mongoose.model('User',userSchema)

@@ -119,7 +119,7 @@ const sendRecoveryMail = async (receiverAdress, user) => {
     })
 }
 
-const sendOrderCompletedEmail = async (receiverAdress, order) => {
+const sendOrderCompletedMail = async (receiverAdress, order) => {
     const ord = await Order.findById(order)
     const quants = new Object()
     const products = []
@@ -230,7 +230,42 @@ const sendOrderCompletedEmail = async (receiverAdress, order) => {
     })
 }
 
+const sendCodeVerificationMail = async (receiverAdress, user) => {
+    const transporter = createTransport()
+    readHTMLFile('./email_content/codeVerification.html', function (err, html) {
+        var template = handlebars.compile(html)
+        var replacements = {
+            logo: {
+                src: logoId,
+                cls: 'image'
+            },
+            code: user.registrationCode,
+            name: user.name.split(' ')[0],
+        }
+        var htmlToSend = template(replacements)
+        const mailOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: receiverAdress,
+            subject: 'Zabudnuté heslo',
+            html: htmlToSend,
+            attachments: [{
+                filename: 'logo.png',
+                path: './email_content/logo.png',
+                cid: `${logoId}`
+            }]
+        }
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error)
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    })
+}
+
 module.exports = {
     sendRecoveryMail,
-    sendOrderCompletedEmail
+    sendOrderCompletedMail,
+    sendCodeVerificationMail
 }

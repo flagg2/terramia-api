@@ -2,9 +2,8 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-//REDUNDAND for terramia
-//require('./cron_jobs/checkAvailable')
 require('dotenv/config')
+require('./cron_jobs/cron_jobs')
 
 //Import Routes
 const authRoute = require('./routes/auth/auth')
