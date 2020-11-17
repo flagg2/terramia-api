@@ -14,8 +14,11 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const methods = require('../../middlewares/methods')
 const crypto = require('crypto')
+require('./register')(router)
+
 
 //register user
+/*
 router.all('/register', methods(['POST']))
 router.post('/register', async (req, res) => {
     //validate req
@@ -32,6 +35,7 @@ router.post('/register', async (req, res) => {
     }
 
     //check if phone exists
+    if(req.body.phone){
     if (await User.findOne({
             phone: req.body.phone
         })) {
@@ -40,7 +44,7 @@ router.post('/register', async (req, res) => {
             type: 'phone',
             error: 'exists'
         })
-    }
+    }}
 
     //hash passwords
     const salt = await bcrypt.genSalt(10)
@@ -59,7 +63,7 @@ router.post('/register', async (req, res) => {
     } catch (err) {
         res.status(400).send(err)
     }
-})
+})*/
 
 
 //log user in
@@ -74,6 +78,18 @@ router.post('/login', async (req, res) => {
         return res.status(400).send({
             message: 'Email is invalid',
             error: 'email'
+        })
+    }
+    if(!user.address) {
+        return res.status(400).send({
+            message: 'User has not yet provided their billing details',
+            error:'no-billing'
+        })
+    }
+    if(!user.password){
+        return res.status(400).send({
+            message:'User has not yet finished the registration process and set their password',
+            error:'no-password'
         })
     }
     //check if password is correct

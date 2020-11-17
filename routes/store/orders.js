@@ -7,7 +7,6 @@ const {
     idValidation,
     orderValidation
 } = require('../../utils/validation')
-const {sendOrderCompletedEmail} = require('../../utils/mailer')
 const {validateCoupon} = require('../../utils/orderHelpers')
 const {
     notFound, serverError

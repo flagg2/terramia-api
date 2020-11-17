@@ -2,7 +2,7 @@ const User = require('../model/user')
 const Product = require('../model/product')
 const Coupon = require('../model/coupon')
 const {serverError} = require('./errors');
-const {sendOrderCompletedEmail} = require('./mailer')
+const {sendOrderCompletedMail} = require('./mailer')
 
 const calculateOrderAmount = async (order, ignoreCoupon = false) => {
     try {
@@ -82,8 +82,6 @@ const validateCoupon = async (order, res) => {
 }
 
 const updateSimilarProducts = async (lastProduct, user) => {
-    //vypocitam kolkokrat si uz user tento produkt kupil
-    //TODO verify if this works right
     const boughtSoFar = user.boughtProducts[lastProduct.id] ? user.boughtProducts[lastProduct.id].count : (() => {
         user.boughtProducts[lastProduct.id] = {
             count:0
@@ -94,13 +92,13 @@ const updateSimilarProducts = async (lastProduct, user) => {
     user.markModified('boughtProducts')
     lastProduct.markModified('boughtTogether')
     for (prop in user.boughtProducts){
-        console.log('here')
+        const onsecutivePurchasesSignificanceRatio = 0.8
         if (prop == lastProduct.id){
             user.boughtProducts[prop].count += 1
-        }
+        } 
         else {
             if (lastProduct.boughtTogether[prop]){
-                lastProduct.boughtTogether[prop]+=0.8**boughtSoFar
+                lastProduct.boughtTogether[prop]+=onsecutivePurchasesSignificanceRatio**boughtSoFar
             }
             else {
                 lastProduct.boughtTogether[prop]=1
@@ -108,7 +106,7 @@ const updateSimilarProducts = async (lastProduct, user) => {
             
             const productToUpdate = await Product.findById(prop)
             if (productToUpdate.boughtTogether[lastProduct.id]){
-                productToUpdate.boughtTogether[lastProduct.id]+=0.5**boughtSoFar
+                productToUpdate.boughtTogether[lastProduct.id]+=consecutivePurchasesSignificanceRatio**boughtSoFar
             }
             else{
                 productToUpdate.boughtTogether[lastProduct.id]=1
@@ -118,6 +116,7 @@ const updateSimilarProducts = async (lastProduct, user) => {
             await productToUpdate.save()
         }
     }
+    await user.save()
 }
 
 const finishOrder = async (order, res) => {
@@ -147,7 +146,7 @@ const finishOrder = async (order, res) => {
             coupon.markModified('redeems')
             await coupon.save()
         }
-        sendOrderCompletedEmail(user.email, order)
+        sendOrderCompletedMail(user.email, order)
         await user.save()
         await order.save()
         return res.send()

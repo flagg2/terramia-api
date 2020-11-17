@@ -196,10 +196,11 @@ const orderValidation = (req, res) => {
 
 const registerValidation = (req, res) => {
     const Joischema = Joi.object({
-        name: Joi.string().min(6).max(50).required(),
+        //TODO add fail cases to when user has no name/phone when they are creating an order
+        name: Joi.string().min(6).max(50),
         email: Joi.string().min(6).max(255).required().email(),
         password: Joi.string().min(6).max(1024).required(),
-        phone: Joi.string().regex(/^[+]?[0-9]+$/).min(6).max(20).required(),
+        phone: Joi.string().regex(/^[+]?[0-9]+$/).min(6).max(20),
         address: Joi.string().max(50),
         psc: Joi.string().min(3).max(10),
         country: Joi.string().min(6).max(30),
@@ -211,6 +212,47 @@ const registerValidation = (req, res) => {
         return res.status(400).send(passwordError)
     }
     return validate(req, res, Joischema)
+}
+
+const preRegisterValidation = (req,res) => {
+    const Joischema = Joi.object({
+        email: Joi.string().min(6).max(255).required().email(),
+        knowDoTerra: Joi.boolean().required(),
+        sampleType: Joi.number().min(1).max(5).required(),
+    })
+    return validate(req,res,Joischema)
+}
+
+const sendCodeRegisterValidation = (req,res) => {
+    const Joischema = Joi.object({
+        email : Joi.string().min(6).max(255).required().email()
+    })
+}
+
+const billingRegisterValidation = (req,res) => {
+    const Joischema = Joi.object({
+        email: Joi.string().min(6).max(255).required().email(),
+        phone: Joi.string().regex(/^[+]?[0-9]+$/).min(6).max(20).required(),
+        address: Joi.string().max(50).required(),
+        psc: Joi.string().min(3).max(10).required(),
+        country: Joi.string().max(30).required(),
+        city: Joi.string().max(50).required(),
+        name: Joi.string().max(50).required()
+    })
+    return validate(req,res,Joischema)
+}
+
+const finishRegisterValidation = (req,res) => {
+    const Joischema = Joi.object({
+        email: Joi.string().min(6).max(255).required().email(),
+        code: Joi.string().required(),
+        password: Joi.string().min(8).max(1024).required()
+    })
+    const passwordError = validatePassword(req.body.password)
+    if (passwordError) {
+        return res.status(400).send(passwordError)
+    }
+    validate(req,res,Joischema)
 }
 
 const loginValidation = (req, res) => {
@@ -277,17 +319,21 @@ module.exports = {
     requestSamplesValidation,
     getFilteredUsersValidation,
     registerValidation,
+    preRegisterValidation,
+    billingRegisterValidation,
+    finishRegisterValidation,
     getFilteredOrdersValidation,
     loginValidation,
     patchProfileValidation,
     patchProductValidation,
     changePasswordValidation,
     resetPasswordValidation,
+    sendCodeRegisterValidation,
     newProductValidation,
     getFilteredProductsValidation,
     tempUserValidation,
     orderValidation,
     createPaymentValidation,
     idValidation,
-    createCouponValidation
+    createCouponValidation,
 }

@@ -31,7 +31,8 @@ module.exports = (router) => {
             })
             await coupon.save()
             res.send({
-                message:'Coupon created successfully'
+                message:'Coupon created successfully',
+                id: coupon._id
             })
         }
         catch(err){
@@ -73,7 +74,7 @@ module.exports = (router) => {
     router.delete('/coupons/:id', verify(1), async (req,res) => {
         if (idValidation(req,res)) return
         try{
-            const coupon = await Coupon.findByIdAndDelete(req.params.id, () => {})
+            const coupon = await Coupon.findByIdAndDelete(req.params.id)
             if (!coupon) return notFound(res,'Coupon')
             res.send({
                 message: 'Deleted successfully'

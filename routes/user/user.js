@@ -91,12 +91,10 @@ router.patch('/profile', verify(0), async (req, res) => {
          'country'
     ]
     try {
-        //TODO fix doesnt work
         //update user
         const user = await User.findById(req.user._id)
         for (const prop of props) {
-            //TODO zmenit eval na zatvorkovu notaciu
-            if (eval(`req.body.${prop} !== undefined`)) {
+            if (req.body[prop !== undefined]) {
                 //check if email exists
                 if (prop == 'email') {
                     const userByReq = await User.findOne({
@@ -123,7 +121,7 @@ router.patch('/profile', verify(0), async (req, res) => {
                         })
                     }
                 }
-                eval(`user.${prop} = req.body.${prop}`)
+                user[prop] = req.body[prop]
             }
         }
         await user.save()
