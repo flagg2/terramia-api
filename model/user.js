@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true,
         min: 6,
         max: 255
     },
@@ -67,7 +66,6 @@ const userSchema = new mongoose.Schema({
     },
     sampleType:{
         type: Number,
-        required: true,
         min:1,
         max:9
     },
