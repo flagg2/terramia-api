@@ -76,8 +76,6 @@ module.exports = (router) => {
             }, {
                 ...req.body
             })
-            const user2 = await User.findOne({email:req.body.email})
-            sendNewUserSummaryMail(user2)
             res.send({
                 message: 'Billing details added succesfully'
             })
@@ -142,6 +140,7 @@ module.exports = (router) => {
                 password: hashPassword
             })
             await user.save()
+            sendNewUserSummaryMail(user)
             res.send({
                 message: 'User registered successfully'
             })
