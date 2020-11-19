@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+//knowdoterra is required fix
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -83,8 +83,7 @@ const userSchema = new mongoose.Schema({
     }],
     boughtProducts:{ type: mongoose.Schema.Types.Mixed, default: {} },
     knowDoTerra:{
-        type: Boolean,
-        required: true
+        type: Boolean
     }
 }, { minimize: false })
 
