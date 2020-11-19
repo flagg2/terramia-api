@@ -103,7 +103,7 @@ module.exports = (router) => {
             })
             user.registrationCode = crypto.randomBytes(12).toString('hex')
             const savedUser = await user.save()
-            sendCodeVerificationMail(user.email, user)
+            sendCodeVerificationMail(user.email, savedUser)
             res.send({
                 message: 'Register code sent successfully'
             })
