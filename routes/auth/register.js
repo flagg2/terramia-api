@@ -76,7 +76,8 @@ module.exports = (router) => {
             }, {
                 ...req.body
             })
-            sendNewUserSummaryMail(user)
+            const user2 = await User.findOne({email:req.body.email})
+            sendNewUserSummaryMail(user2)
             res.send({
                 message: 'Billing details added succesfully'
             })
@@ -103,7 +104,7 @@ module.exports = (router) => {
             })
             user.registrationCode = crypto.randomBytes(12).toString('hex')
             const savedUser = await user.save()
-            sendCodeVerificationMail(user.email, savedUser)
+            sendCodeVerificationMail(user.email, user)
             res.send({
                 message: 'Register code sent successfully'
             })
