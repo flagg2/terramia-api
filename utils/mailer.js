@@ -4,7 +4,8 @@ const handlebars = require('handlebars');
 const user = require('../model/user');
 const Coupon = require('../model/coupon')
 const Order = require('../model/order')
-const Product = require('../model/product')
+const Product = require('../model/product');
+const order = require('../model/order');
 const logoId = 'terramia_logo'
 
 handlebars.registerHelper("link", function (text, url, cls) {
@@ -119,7 +120,7 @@ const sendRecoveryMail = async (receiverAdress, user) => {
     })
 }
 
-const sendOrderCompletedMail = async (receiverAdress, order) => {
+const prepareOrderHelpers = async (order) => {
     const ord = await Order.findById(order)
     const quants = new Object()
     const products = []
@@ -200,6 +201,11 @@ const sendOrderCompletedMail = async (receiverAdress, order) => {
             return new handlebars.SafeString(discString)
         } else return
     })
+    return [ord, attachments]
+}
+
+const sendOrderCompletedMail = async (receiverAdress, order) => {
+    const [ord, attachments] = await prepareOrderHelpers(order)
     const transporter = createTransport()
     readHTMLFile('./email_content/order.html', function (err, html) {
         var template = handlebars.compile(html);
@@ -220,6 +226,93 @@ const sendOrderCompletedMail = async (receiverAdress, order) => {
             attachments: attachments
         };
 
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error)
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    })
+}
+
+const sendNewOrderMail = async (order, user) => {
+    const receiverAdress = process.env.ORDERS_RECIEVER_MAIL
+    const [ord, attachments] = await prepareOrderHelpers(order)
+    const transporter = createTransport()
+    readHTMLFile('./email_content/order_summary.html', function (err, html) {
+        var template = handlebars.compile(html);
+        console.log(ord.value)
+        var replacements = {
+            logo: {
+                src: logoId,
+                cls: 'image'
+            },
+            orderSum: parseInt(ord.value) / 100,
+            user:{
+                name:user.name,
+                email:user.email,
+                phone:user.phone,
+                address:user.address,
+                psc:user.psc,
+                country:user.country,
+                city:user.city
+            }
+        };
+        console.log(replacements)
+        var htmlToSend = template(replacements);
+        const mailOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: receiverAdress,
+            subject: 'Nová objednávka',
+            html: htmlToSend,
+            attachments: attachments
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error)
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    })
+}
+
+const sendNewUserSummaryMail = async (user) => {
+    const receiverAdress = process.env.ORDERS_RECIEVER_MAIL
+    const transporter = createTransport()
+    readHTMLFile('./email_content/new_user_summary.html', function (err, html) {
+        var template = handlebars.compile(html)
+        var replacements = {
+            logo: {
+                src: logoId,
+                cls: 'image'
+            },
+            user:{
+                name:user.name,
+                email:user.email,
+                phone:user.phone,
+                address:user.address,
+                psc:user.psc,
+                country:user.country,
+                city:user.city,
+                sampleType:user.sampleType
+            }
+            
+        }
+        var htmlToSend = template(replacements)
+        const mailOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: receiverAdress,
+            subject: 'Žiadosť o vzorky',
+            html: htmlToSend,
+            attachments: [{
+                filename: 'logo.png',
+                path: './email_content/logo.png',
+                cid: `${logoId}`
+            }]
+        }
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error)
@@ -267,5 +360,7 @@ const sendCodeVerificationMail = async (receiverAdress, user) => {
 module.exports = {
     sendRecoveryMail,
     sendOrderCompletedMail,
+    sendNewUserSummaryMail,
+    sendNewOrderMail,
     sendCodeVerificationMail
 }

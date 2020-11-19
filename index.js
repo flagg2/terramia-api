@@ -5,6 +5,8 @@ const mongoose = require('mongoose')
 require('dotenv/config')
 require('./cron_jobs/cron_jobs')
 
+//TODO pridat moznost kontaktu cez formular
+
 //Import Routes
 const authRoute = require('./routes/auth/auth')
 const userRoute = require('./routes/user/user')
