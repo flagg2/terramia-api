@@ -1,7 +1,9 @@
-/*require('dotenv')
+const CronJob = require('cron').CronJob;
 const backup = require('mongodb-backup-4x');
- console.log(process.env.DB_CONNECTION)
+const job = new CronJob('0 3 */1 * *', async function() {
 backup({
   uri: process.env.DB_CONNECTION,
-  root: __dirname
-});*/
+  root: `./backups/${new Date().toISOString().replace(/:/g, '-')}`
+});
+})
+job.start()

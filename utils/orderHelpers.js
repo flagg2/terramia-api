@@ -2,7 +2,7 @@ const User = require('../model/user')
 const Product = require('../model/product')
 const Coupon = require('../model/coupon')
 const {serverError} = require('./errors');
-const {sendOrderCompletedMail} = require('./mailer')
+const {sendOrderCompletedMail,sendNewOrderMail} = require('./mailer')
 
 const calculateOrderAmount = async (order, ignoreCoupon = false) => {
     try {
@@ -147,6 +147,7 @@ const finishOrder = async (order, res) => {
             await coupon.save()
         }
         sendOrderCompletedMail(user.email, order)
+        sendNewOrderMail(order, user)
         await user.save()
         await order.save()
         return res.send()
