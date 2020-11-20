@@ -47,7 +47,7 @@ var readHTMLFile = (path, callback) => {
 
 const sendWelcomeEmail = async (receiverAdress, user) => {
     const transporter = createTransport()
-    const link = `${process.env.PASSWORD_RESET_LINK}?secret=${user.resetSecret}`
+    const link = `${process.env.PASSWORD_RESET_LINK}/${user.resetSecret}`
     readHTMLFile('./email_content/recovery.html', function (err, html) {
         var template = handlebars.compile(html);
         var replacements = {
