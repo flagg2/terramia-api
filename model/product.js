@@ -45,7 +45,15 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-    boughtTogether : { type: mongoose.Schema.Types.Mixed, default: {} }
+    boughtTogether : { type: mongoose.Schema.Types.Mixed, default: {} },
+    topProduct: {
+        type: Boolean,
+        default: false
+    },
+    problemType: {
+        type: Number,
+        min:0
+    }
 }
 
 , { minimize: false })
