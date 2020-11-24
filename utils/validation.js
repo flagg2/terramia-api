@@ -234,6 +234,7 @@ const sendCodeRegisterValidation = (req,res) => {
     const Joischema = Joi.object({
         email : Joi.string().min(6).max(255).required().email()
     })
+    return validate(req,res,Joischema)
 }
 
 const billingRegisterValidation = (req,res) => {

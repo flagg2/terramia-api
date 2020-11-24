@@ -1,8 +1,11 @@
 const methods = require('../../middlewares/methods')
 const verify = require('../../middlewares/verifyToken')
 const Order = require('../../model/order')
+const User = require('../../model/user')
 const {notFound} = require('../../utils/errors')
 const {serverError} = require('../../utils/errors')
+const { sendOrderCancelledMail } = require('../../utils/mailer')
+const {refundOrder} = require('../../utils/orderHelpers')
 const {
     idValidation,
     getFilteredOrdersValidation,
@@ -83,8 +86,11 @@ router.post('/orders/:id/cancel',verify(1),async (req,res) => {
         if (order.status == 'pending') return res.status(400).send({message:'Cannot cancel an unpaid order',error:'unpaid'})
         if (order.status == 'fulfilled') return res.status(400).send({message:'The order has already been fulfilled',error:'fulfilled'})
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
-        order.status = 'cancel'
+        order.status = 'cancelled'
         await order.save()
+        await refundOrder(order)
+        const user = await User.findById(order.orderedBy)
+        await sendOrderCancelledMail(user.email,order)
         res.send({
             message:'Order cancelled successfully',
             order:order

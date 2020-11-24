@@ -1,6 +1,7 @@
 const User = require('../model/user')
 const Product = require('../model/product')
 const Coupon = require('../model/coupon')
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const {serverError} = require('./errors');
 const {sendOrderCompletedMail,sendNewOrderMail} = require('./mailer')
 
@@ -156,8 +157,16 @@ const finishOrder = async (order, res) => {
     }
 }
 
+const refundOrder = async (order) => {
+    const refund = await stripe.refunds.create({
+        payment_intent: `pi_${order.clientSecret.split('_')[1]}`,
+      });
+    return refund
+}
+
 module.exports = {
     validateCoupon,
     calculateOrderAmount,
-    finishOrder
+    finishOrder,
+    refundOrder
 }

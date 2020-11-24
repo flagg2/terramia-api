@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 require('dotenv/config')
 require('./cron_jobs/cron_jobs')
 
+//TODO zmenit cislo na realne v emailoch
 //TODO pridat moznost kontaktu cez formular
 
 //Import Routes

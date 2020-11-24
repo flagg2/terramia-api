@@ -47,6 +47,21 @@ router.post('/users', verify(1), async (req, res) => {
     }
 })
 
+router.all('/users/pendingSamples', methods(['GET']))
+router.get('/users/pendingSamples', async (req,res) => {
+    try{
+        const users = await User.find({sampleSent:false, address:{$exists:true}})
+        res.send({
+            message:'Users with pending samples retrieved successfully',
+            count: users.length,
+            users: users
+        })
+    }
+    catch(err){
+        serverError(err)
+    }
+})
+
 router.all('/users/:id',methods(['GET']))
 router.get('/users/:id',verify(1),async (req,res)=>{
     if (idValidation(req,res)) return
