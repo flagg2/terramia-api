@@ -1,0 +1,145 @@
+<html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+            .main-cont{
+                background-color: rgb(249, 235, 255);
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+                font-size: 15px;
+            }
+            .cont{
+                margin:auto;
+                box-sizing: border-box;
+                width: 96%;
+                font-family: 'Open Sans', sans-serif;
+                max-width: 700px;
+                background-color: white;
+                padding: 40px;
+                border-radius: 10px;
+                border: 1px solid #cccccc;
+            }
+            .productImg img{
+                max-width: 100px;
+                object-fit: contain;
+                display: block;
+                margin-right: auto;
+            }
+            .image{
+                display: block;
+                margin-right: auto;
+                width: 50%;
+                max-width: 300px;
+                object-fit: contain;
+            }
+            @media (max-width: 700px){
+                .cont{
+                padding-left: 10px;
+                padding-right: 10px;
+                }
+                .productImg img{
+                max-width: 70px;
+                }
+                h1{
+                    font-size: 19px;
+                }
+            }
+            @media (max-width: 560px){
+                .productImg img{
+                max-width: 60px;
+                }
+            }
+            .link{
+                display: block;
+                margin: 10px auto;
+                margin-top: 30px;
+                font-size: 16px;
+                text-decoration: none;
+                background-color: #A161B3;
+                color: white !important;
+                border-radius: 7px;
+                padding: 10px 20px;
+                max-width: 100px;
+                width: 80%;
+                text-align: center;
+                transition: all .3s;
+            }
+            .link:hover{
+                background-color: #834e92;
+            }
+            .products{
+                table-layout: fixed;
+                border-collapse: collapse;
+                width: 100%;
+                text-align: right;
+                border-bottom: 1px solid lightgray;
+            }
+            .products th, .products td{
+                padding: 10px;
+                overflow: auto;
+                word-break:keep-all;
+                word-wrap: normal;
+            }
+            .products td{
+            }
+            .underline{
+                border-bottom: 1px solid lightgray;
+                width: 98%;
+                padding-bottom: 2px;
+            }
+
+            .overline{
+                text-align: left;
+                table-layout: fixed;
+                border-collapse: collapse;
+                margin-top: 20px;
+                width: 100%;
+                padding-bottom: 2px;
+            }
+
+            .underline th{
+                padding-bottom: 0;
+            }
+            .name-h{
+                text-align: left !important;
+                padding-left: 10px;
+            }
+            .productName, .productImg{
+                text-align: left !important;
+            }
+            .thanks{
+                margin-bottom: 50px;
+            }
+            .total-price{
+                padding-right: 10px;
+                text-align: right;
+            }
+            .total-sum{
+                padding-right: 10px;
+            }
+            strong{
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main-cont">
+        <div class="cont">
+            {{img logo.src logo.cls}}
+            <h1>Zrušenie objednávky a vrátenie peňazí</h1>
+            <div class="thanks">Dobrý deň, ľutujeme, ale tover ktorý ste si objednali nie je momentálne na sklade,
+                Platba za objednávku vám čoskoro bude vrátená na účet. Za vzniknutú nepríjemnosť sa ospravedlňujeme.
+                V prípade akýchkoľvek otázok nás neváhajte kontaktovať na <a href="tel:+421931424521">+421931424521</a>
+            </div>
+            {{products}}
+            <table class="overline">
+                {{discount}}
+                <tr>
+                    <td class="total-sum"><strong>Vrátená suma:</strong></td>
+                    <td class="total-price"><strong>{{orderSum}}€</strong></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    </body>
+</html>

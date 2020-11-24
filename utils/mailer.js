@@ -236,6 +236,38 @@ const sendOrderCompletedMail = async (receiverAdress, order) => {
     })
 }
 
+const sendOrderCancelledMail = async (receiverAdress, order) => {
+    const [ord, attachments] = await prepareOrderHelpers(order)
+    const transporter = createTransport()
+    readHTMLFile('./email_content/order_refund.html', function (err, html) {
+        var template = handlebars.compile(html);
+        console.log(ord.value)
+        var replacements = {
+            logo: {
+                src: logoId,
+                cls: 'image'
+            },
+            orderSum: parseInt(ord.value) / 100
+        };
+        var htmlToSend = template(replacements);
+        const mailOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: receiverAdress,
+            subject: 'Zrušenie objednávky',
+            html: htmlToSend,
+            attachments: attachments
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error)
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    })
+}
+
 const sendNewOrderMail = async (order, user) => {
     const receiverAdress = process.env.ORDERS_RECIEVER_MAIL
     const [ord, attachments] = await prepareOrderHelpers(order)
@@ -362,5 +394,6 @@ module.exports = {
     sendOrderCompletedMail,
     sendNewUserSummaryMail,
     sendNewOrderMail,
-    sendCodeVerificationMail
+    sendCodeVerificationMail,
+    sendOrderCancelledMail
 }
