@@ -50,10 +50,10 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    problemType: {
+    problemType: [{
         type: Number,
         min:0
-    }
+    }]
 }
 
 , { minimize: false })

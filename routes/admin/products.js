@@ -31,7 +31,13 @@ module.exports = (router) => {
     router.post('/products', verify(1), async (req, res) => {
         if (getFilteredProductsValidation(req,res)) return
         try {
-            const products = await Product.find(req.body.filters).limit(req.body.limit)
+            let products;
+            if (req.body.filters.problemType){
+                products = await Product.find({...req.body.filters,problemType:{$elemMatch :{ $in : [req.body.filters.problemType]}}}).limit(req.body.limit)
+            }
+            else{
+                products = await Product.find(req.body.filters).limit(req.body.limit)
+            }
             if (req.body.query){
                 const searchResults = smartSearch(req.body.query,products)
                 return res.send({

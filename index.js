@@ -15,6 +15,7 @@ const adminRoute = require('./routes/admin/admin')
 const notFoundRoute = require('./routes/notfound/notfound')
 const storeRoute = require('./routes/store/store')
 const paymentRoute = require('./routes/payments/payments')
+const contactRoute = require('./routes/contact/contact')
 
 
 //Connect to DB
@@ -58,6 +59,7 @@ app.use('/api/user', userRoute)
 app.use('/api/admin', adminRoute)
 app.use('/api/store', storeRoute)
 app.use('/api/payments', paymentRoute)
+app.use('/api/contact',contactRoute)
 app.use('*',notFoundRoute)
 
 app.listen(8080, ()=>{console.log('Server up and running.')})

@@ -43,7 +43,7 @@ const newProductValidation = (req, res) => {
         eshop: Joi.boolean(),
         available: Joi.boolean(),
         topProduct: Joi.boolean(),
-        problemType: Joi.number()
+        problemType: Joi.array().items(Joi.number())
     })
     return validate(req, res, Joischema)
 }
@@ -58,7 +58,7 @@ const patchProductValidation = (req, res) => {
         eshop: Joi.boolean(),
         available: Joi.boolean(),
         topProduct: Joi.boolean(),
-        problemType: Joi.number()
+        problemType: Joi.array().items(Joi.number())
     })
     return validate(req, res, Joischema)
 }
@@ -323,6 +323,17 @@ const createCouponValidation = (req,res) => {
     return validate(req,res,Joischema)
 }
 
+const createMessageValidation = (req,res) => {
+    const Joischema = Joi.object({
+        name: Joi.string().max(50).required(),
+        email: Joi.string().max(50).required().email(),
+        phone: Joi.string().regex(/^[+]?[0-9]+$/).min(6).max(20),
+        message:Joi.string().max(2000).required() 
+    })
+
+    return validate(req,res,Joischema)
+}
+
 module.exports = {
     requestSamplesValidation,
     getFilteredUsersValidation,
@@ -344,4 +355,5 @@ module.exports = {
     createPaymentValidation,
     idValidation,
     createCouponValidation,
+    createMessageValidation
 }
