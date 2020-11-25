@@ -188,7 +188,7 @@ const prepareOrderHelpers = async (order) => {
     const discString = coupon ? `    
                             <tr class='disc'>
                                 <td class="total-sum">Suma pred zľavou</td>
-                                <td class="total-price">${orderSum/100}€</td>
+                                <td class="total-price">${(orderSum/100).toFixed(2)}€</td>
                             </tr>
                      
                             <tr>
@@ -215,7 +215,7 @@ const sendOrderCompletedMail = async (receiverAdress, order) => {
                 src: logoId,
                 cls: 'image'
             },
-            orderSum: parseInt(ord.value) / 100
+            orderSum: (parseInt(ord.value) / 100).toFixed(2)
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
@@ -247,7 +247,7 @@ const sendOrderCancelledMail = async (receiverAdress, order) => {
                 src: logoId,
                 cls: 'image'
             },
-            orderSum: parseInt(ord.value) / 100
+            orderSum: (parseInt(ord.value) / 100).toFixed(2)
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
@@ -280,7 +280,7 @@ const sendNewOrderMail = async (order, user) => {
                 src: logoId,
                 cls: 'image'
             },
-            orderSum: parseInt(ord.value) / 100,
+            orderSum: (parseInt(ord.value) / 100).toFixed(2),
             user:{
                 name:user.name,
                 email:user.email,
@@ -309,6 +309,46 @@ const sendNewOrderMail = async (order, user) => {
             }
         });
     })
+}
+
+const sendNewMessage = async(message) => {
+    const receiverAdress = process.env.ORDERS_RECIEVER_MAIL
+    const transporter = createTransport()
+    readHTMLFile('./email_content/message.html', function (err, html) {
+        var template = handlebars.compile(html)
+        var replacements = {
+            logo: {
+                src: logoId,
+                cls: 'image'
+            },
+            user:{
+                name:message.name,
+                email:message.email,
+                phone:message.phone,
+                message:message.message,
+            }
+            
+        }
+        var htmlToSend = template(replacements)
+        const mailOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: receiverAdress,
+            subject: 'Nová správa',
+            html: htmlToSend,
+            attachments: [{
+                filename: 'logo.png',
+                path: './email_content/logo.png',
+                cid: `${logoId}`
+            }]
+        }
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error)
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    });
 }
 
 const sendNewUserSummaryMail = async (user) => {
@@ -395,5 +435,6 @@ module.exports = {
     sendNewUserSummaryMail,
     sendNewOrderMail,
     sendCodeVerificationMail,
-    sendOrderCancelledMail
+    sendOrderCancelledMail,
+    sendNewMessage
 }
