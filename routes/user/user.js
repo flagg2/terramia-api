@@ -94,7 +94,7 @@ router.patch('/profile', verify(0), async (req, res) => {
         //update user
         const user = await User.findById(req.user._id)
         for (const prop of props) {
-            if (req.body[prop !== undefined]) {
+            if (req.body[prop] !== undefined) {
                 //check if email exists
                 if (prop == 'email') {
                     const userByReq = await User.findOne({
@@ -124,7 +124,9 @@ router.patch('/profile', verify(0), async (req, res) => {
                 user[prop] = req.body[prop]
             }
         }
-        await user.save()
+        console.log(user)
+        const su = await user.save()
+        console.log(su)
         res.send({
             message: 'Records updated successfully'
         })
