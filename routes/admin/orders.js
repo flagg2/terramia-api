@@ -86,7 +86,6 @@ router.post('/orders/:id/cancel',verify(1),async (req,res) => {
         if (!order) return notFound(res,'Order')
         if (order.status == 'sent') return res.status(400).send({message:'The order has already been sent',error:'sent'})
         if (order.status == 'pending') return res.status(400).send({message:'Cannot cancel an unpaid order',error:'unpaid'})
-        if (order.status == 'fulfilled') return res.status(400).send({message:'The order has already been fulfilled',error:'fulfilled'})
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
         order.status = 'cancelled'
         await order.save()
