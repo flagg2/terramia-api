@@ -411,7 +411,7 @@ const sendCodeVerificationMail = async (receiverAdress, user) => {
         const mailOptions = {
             from: process.env.EMAIL_ADDRESS,
             to: receiverAdress,
-            subject: 'Zabudnuté heslo',
+            subject: 'Overovací kód',
             html: htmlToSend,
             attachments: [{
                 filename: 'logo.png',
