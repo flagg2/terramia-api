@@ -95,7 +95,7 @@ const requestSamplesValidation = (req,res) => {
 const getFilteredOrdersValidation = (req, res) => {
     const Joischema = Joi.object({
         filters: Joi.object({
-            status: Joi.string().valid('paid','fulfilled','pending','cancelled'),
+            status: Joi.string().valid('paid','fulfilled','pending','cancelled','sent'),
             orderedBy: Joi.string().max(20)
         }),
         sortBy: Joi.object({

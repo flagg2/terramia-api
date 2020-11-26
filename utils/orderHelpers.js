@@ -93,13 +93,13 @@ const updateSimilarProducts = async (lastProduct, user) => {
     user.markModified('boughtProducts')
     lastProduct.markModified('boughtTogether')
     for (prop in user.boughtProducts){
-        const onsecutivePurchasesSignificanceRatio = 0.8
+        const consecutivePurchasesSignificanceRatio = 0.8
         if (prop == lastProduct.id){
             user.boughtProducts[prop].count += 1
         } 
         else {
             if (lastProduct.boughtTogether[prop]){
-                lastProduct.boughtTogether[prop]+=onsecutivePurchasesSignificanceRatio**boughtSoFar
+                lastProduct.boughtTogether[prop]+=consecutivePurchasesSignificanceRatio**boughtSoFar
             }
             else {
                 lastProduct.boughtTogether[prop]=1
