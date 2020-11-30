@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
+
 require('dotenv/config')
 require('./cron_jobs/cron_jobs')
 
@@ -19,9 +19,8 @@ const contactRoute = require('./routes/contact/contact')
 
 
 //Connect to DB
-mongoose.connect(process.env.DB_CONNECTION,{useNewUrlParser: true, useUnifiedTopology: true}, ()=>{
-    console.log('Connected to db!')
-})
+
+require('./utils/DBconfig')
 
 
 //Middlewares

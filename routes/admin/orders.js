@@ -4,7 +4,7 @@ const Order = require('../../model/order')
 const User = require('../../model/user')
 const {notFound} = require('../../utils/errors')
 const {serverError} = require('../../utils/errors')
-const { sendOrderCancelledMail } = require('../../utils/mailer')
+const { sendOrderCancelledMail,sendOrderProcessedMail,sendOrderSentMail } = require('../../utils/mailer')
 const {refundOrder} = require('../../utils/orderHelpers')
 const {
     idValidation,
@@ -68,6 +68,8 @@ router.post('/orders/:id/fulfill',verify(1),async (req,res) => {
         if (order.status == 'fulfilled') return res.status(400).send({message:'The order has already been fulfileld',error:'fulfilled'})
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
         order.status = 'fulfilled'
+        const user = await User.findById(order.orderedBy)
+        await sendOrderProcessedMail(user.email,order.id)
         await order.save()
         res.send({
             message:'Order fulfilled successfully',
@@ -112,6 +114,8 @@ router.post('/orders/:id/send',verify(1),async (req,res) => {
         if (order.status == 'sent') return res.status(400).send({message:'The order has already been sent',error:'sent'})
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
         order.status = 'sent'
+        const user = await User.findById(order.orderedBy)
+        await sendOrderSentMail(user.email,order.id)
         await order.save()
         res.send({
             message:'Order sent successfully',

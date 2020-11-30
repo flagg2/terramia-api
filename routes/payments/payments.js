@@ -8,6 +8,7 @@ const {
 const User = require('../../model/user')
 const { serverError } = require('../../utils/errors')
 const { validateCoupon,calculateOrderAmount,finishOrder } = require('../../utils/orderHelpers')
+const { not } = require('@hapi/joi')
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 router.all('/webhook', methods(['POST']))
@@ -29,6 +30,7 @@ router.post('/webhook', async (req, res) => {
 				return res.status(400).send(`Webhook error: invalid secret`)
 			}
 			if (!order.paid){
+				console.log('here')
 			return finishOrder(order,res)
 			}
 			
@@ -58,6 +60,12 @@ router.post('/create', async (req, res) => {
 		}
 		if (await validateCoupon(order,res)) return
 		orderAmount = await calculateOrderAmount(order)
+		// if order below 100 ad shipping cost
+		const shipping = await Product.findOne({name:'Doprava'})
+		if (orderAmount < parseInt(process.env.MINIMUM_VALUE_FREE_SHIPPING) &&  !(order.products).includes(shipping.id)){
+			order.products.push(shipping._id)
+			orderAmount = await calculateOrderAmount(order)
+		}
 		const paymentIntent = await stripe.paymentIntents.create({
 			amount: orderAmount,
 			currency: "eur"

@@ -175,7 +175,7 @@ const prepareOrderHelpers = async (order) => {
                         ${imageHtml}
                         <td class="productName">${product.name}</td>
                         <td class="productQuant">${products[index+1]}</td>
-                        <td class="productPrice">${product.price/100*products[index+1]}€</td>
+                        <td class="productPrice">${(product.price/100*products[index+1]).toFixed(2)}€</td>
                         </tr>`
     }
     string += '</table></div>'
@@ -222,6 +222,70 @@ const sendOrderCompletedMail = async (receiverAdress, order) => {
             from: process.env.EMAIL_ADDRESS,
             to: receiverAdress,
             subject: 'Nová objednávka',
+            html: htmlToSend,
+            attachments: attachments
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error)
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    })
+}
+
+const sendOrderSentMail = async (receiverAdress,order) => {
+    const [ord, attachments] = await prepareOrderHelpers(order)
+    const transporter = createTransport()
+    readHTMLFile('./email_content/order_sent.html', function (err, html) {
+        var template = handlebars.compile(html);
+        console.log(ord.value)
+        var replacements = {
+            logo: {
+                src: logoId,
+                cls: 'image'
+            },
+            orderSum: (parseInt(ord.value) / 100).toFixed(2)
+        };
+        var htmlToSend = template(replacements);
+        const mailOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: receiverAdress,
+            subject: 'Objednávka odoslaná',
+            html: htmlToSend,
+            attachments: attachments
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error)
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    })
+}
+
+const sendOrderProcessedMail = async (receiverAdress, order) => {
+    const [ord, attachments] = await prepareOrderHelpers(order)
+    const transporter = createTransport()
+    readHTMLFile('./email_content/order_processed.html', function (err, html) {
+        var template = handlebars.compile(html);
+        console.log(ord.value)
+        var replacements = {
+            logo: {
+                src: logoId,
+                cls: 'image'
+            },
+            orderSum: (parseInt(ord.value) / 100).toFixed(2)
+        };
+        var htmlToSend = template(replacements);
+        const mailOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: receiverAdress,
+            subject: 'Objednávka spracovaná',
             html: htmlToSend,
             attachments: attachments
         };
@@ -432,6 +496,8 @@ const sendCodeVerificationMail = async (receiverAdress, user) => {
 module.exports = {
     sendRecoveryMail,
     sendOrderCompletedMail,
+    sendOrderProcessedMail,
+    sendOrderSentMail,
     sendNewUserSummaryMail,
     sendNewOrderMail,
     sendCodeVerificationMail,
