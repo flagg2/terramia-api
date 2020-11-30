@@ -12,6 +12,10 @@ const productSchema = new mongoose.Schema({
         required: true,
         max:100
     },
+    label: {
+        type: String,
+        max:100
+    },
     category: {
         type: Number,
         min:0,

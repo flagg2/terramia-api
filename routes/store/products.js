@@ -22,6 +22,7 @@ module.exports = (router) => {
     router.get('/products', async (req, res) => {
         try {
             const products = await Product.find({
+                name: {$not: {$eq: 'Doprava'}},
                 eshop: true
             })
             res.send({
@@ -33,13 +34,14 @@ module.exports = (router) => {
             serverError(res, err)
         }
     })
-
+    //TODO mozno dat native filter j na admina
     router.post('/products', async (req, res) => {
         if (getFilteredProductsValidation(req, res)) return
         try {
             const products = await Product.find({
                 ...req.body.filters,
-                eshop: true
+                name: {$not: {$eq: 'Doprava'}},
+                eshop:true
             }).limit(req.body.limit).sort(req.body.sortBy)
             if (req.body.query) {
                 const searchResults = smartSearch(req.body.query, products)
@@ -124,7 +126,7 @@ module.exports = (router) => {
                             $in: [product._id]
                         }
                     },
-                    'eshop' : true
+                    'eshop' : true,
                 }
             },{
                 $sample: {

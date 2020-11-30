@@ -83,6 +83,8 @@ const validateCoupon = async (order, res) => {
 }
 
 const updateSimilarProducts = async (lastProduct, user) => {
+    const shipping = await Product.findOne({name:'Doprava'})
+    if (shipping.id == lastProduct.id) return
     const boughtSoFar = user.boughtProducts[lastProduct.id] ? user.boughtProducts[lastProduct.id].count : (() => {
         user.boughtProducts[lastProduct.id] = {
             count:0
@@ -93,6 +95,7 @@ const updateSimilarProducts = async (lastProduct, user) => {
     user.markModified('boughtProducts')
     lastProduct.markModified('boughtTogether')
     for (prop in user.boughtProducts){
+        if (prop == shipping.id) continue
         const consecutivePurchasesSignificanceRatio = 0.8
         if (prop == lastProduct.id){
             user.boughtProducts[prop].count += 1
