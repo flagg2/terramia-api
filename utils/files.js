@@ -1,5 +1,5 @@
 const fs = require('fs')
-//const sharp = require('sharp')
+const sharp = require('sharp')
 
 const unlinkIfRedundant = function (path) {
     fs.unlink(`uploads/${path}`, (err) => {
