@@ -38,7 +38,7 @@ const newProductValidation = (req, res) => {
         type: Joi.number().min(1).max(16).required(),
         name: Joi.string().max(100).required(),
         category: Joi.number().max(50),
-        label: Joi.string().max(),
+        label: Joi.string().max(50),
         description: Joi.string().max(5000),
         price: Joi.number().min(0).required(),
         eshop: Joi.boolean(),
@@ -54,7 +54,7 @@ const patchProductValidation = (req, res) => {
         type: Joi.number().min(1).max(16),
         name: Joi.string().max(100),
         category: Joi.number().max(50),
-        label: Joi.string().max(),
+        label: Joi.string().max(50),
         description: Joi.string().max(5000),
         price: Joi.number().min(0),
         eshop: Joi.boolean(),
@@ -69,7 +69,7 @@ const getFilteredProductsValidation = (req, res) => {
     const Joischema = Joi.object({
         filters: Joi.object({
             category: Joi.number().max(50),
-            label: Joi.string().max(),
+            label: Joi.string().max(50),
             name: Joi.string().max(100),
             type: Joi.number().min(1).max(16),
             available: Joi.boolean(),
