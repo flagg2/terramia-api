@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema({
     },
     label: {
         type: String,
-        max:100
+        max:50
     },
     category: {
         type: Number,
