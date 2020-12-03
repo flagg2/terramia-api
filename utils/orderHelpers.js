@@ -107,17 +107,21 @@ const updateSimilarProducts = async (lastProduct, user) => {
             else {
                 lastProduct.boughtTogether[prop]=1
             }
-            
-            const productToUpdate = await Product.findById(prop)
-            if (productToUpdate.boughtTogether[lastProduct.id]){
-                productToUpdate.boughtTogether[lastProduct.id]+=consecutivePurchasesSignificanceRatio**boughtSoFar
+            try{
+                const productToUpdate = await Product.findById(prop)
+                if (productToUpdate.boughtTogether[lastProduct.id]){
+                    productToUpdate.boughtTogether[lastProduct.id]+=consecutivePurchasesSignificanceRatio**boughtSoFar
+                }
+                else{
+                    productToUpdate.boughtTogether[lastProduct.id]=1
+                }
+                productToUpdate.markModified("boughtTogether")
+                
+                await productToUpdate.save()
             }
-            else{
-                productToUpdate.boughtTogether[lastProduct.id]=1
+            catch(err){
+                console.log(serverError)
             }
-            productToUpdate.markModified("boughtTogether")
-            
-            await productToUpdate.save()
         }
     }
     await user.save()
