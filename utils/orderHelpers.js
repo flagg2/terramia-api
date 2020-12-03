@@ -101,13 +101,13 @@ const updateSimilarProducts = async (lastProduct, user) => {
             user.boughtProducts[prop].count += 1
         } 
         else {
+            try{
             if (lastProduct.boughtTogether[prop]){
                 lastProduct.boughtTogether[prop]+=consecutivePurchasesSignificanceRatio**boughtSoFar
             }
             else {
                 lastProduct.boughtTogether[prop]=1
             }
-            try{
                 const productToUpdate = await Product.findById(prop)
                 if (productToUpdate.boughtTogether[lastProduct.id]){
                     productToUpdate.boughtTogether[lastProduct.id]+=consecutivePurchasesSignificanceRatio**boughtSoFar
@@ -120,7 +120,7 @@ const updateSimilarProducts = async (lastProduct, user) => {
                 await productToUpdate.save()
             }
             catch(err){
-                console.log(serverError)
+                console.log(err)
             }
         }
     }
