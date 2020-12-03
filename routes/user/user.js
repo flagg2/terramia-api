@@ -70,7 +70,7 @@ router.get('/profile', verify(0), async (req, res) => {
             user: userInfo
         })
     } catch (err) {
-        res.status(404).send(...err)
+        serverError(res,err)
     }
 })
 
