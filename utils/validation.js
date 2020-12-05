@@ -44,7 +44,8 @@ const newProductValidation = (req, res) => {
         eshop: Joi.boolean(),
         available: Joi.boolean(),
         topProduct: Joi.boolean(),
-        problemType: Joi.array().items(Joi.number())
+        problemType: Joi.array().items(Joi.number()),
+        points:Joi.number().min(0)
     })
     return validate(req, res, Joischema)
 }
@@ -60,7 +61,8 @@ const patchProductValidation = (req, res) => {
         eshop: Joi.boolean(),
         available: Joi.boolean(),
         topProduct: Joi.boolean(),
-        problemType: Joi.array().items(Joi.number())
+        problemType: Joi.array().items(Joi.number()),
+        points:Joi.number().min(0)
     })
     return validate(req, res, Joischema)
 }
@@ -78,7 +80,8 @@ const getFilteredProductsValidation = (req, res) => {
         }),
         sortBy: Joi.object({
             price: Joi.number().valid(-1, 1),
-            soldAmount: Joi.number().valid(-1, 1)
+            soldAmount: Joi.number().valid(-1, 1),
+            points: Joi.number().valid(-1, 1)
         }),
         limit: Joi.number().min(0),
         query: Joi.string(),
@@ -98,7 +101,7 @@ const requestSamplesValidation = (req,res) => {
 const getFilteredOrdersValidation = (req, res) => {
     const Joischema = Joi.object({
         filters: Joi.object({
-            status: Joi.string().valid('paid','fulfilled','pending','cancelled','sent'),
+            status: Joi.string().valid('ordered','fulfilled','pending','cancelled','sent'),
             orderedBy: Joi.string().max(20)
         }),
         sortBy: Joi.object({

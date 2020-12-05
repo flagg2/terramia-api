@@ -50,6 +50,10 @@ const orderSchema = new mongoose.Schema({
     coupon:{
         type:String,
         max:20
+    },
+    paidOnline:{
+        type:Boolean,
+        default:false
     }
 })
 
