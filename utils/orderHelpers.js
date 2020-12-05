@@ -45,6 +45,7 @@ const calculateOrderAmount = async (order, ignoreCoupon = false) => {
 
 const shouldShippingBeFree = async (order) => {
     try{
+        if (await calculateOrderAmount(order) == 0) return true
         let totalPoints = 0;
         const products = order.products
         console.log (products)
