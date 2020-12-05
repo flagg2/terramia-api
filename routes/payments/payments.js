@@ -59,6 +59,7 @@ router.post('/skip', async (req,res) => {
 		})
 		if (await validateCoupon(order,res)) return
 		const shipping = await Product.findOne({name:'Doprava'})
+		orderAmount = await calculateOrderAmount(order)
 		if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)) order.products.push(shipping._id)
 		orderAmount = await calculateOrderAmount(order)
 		order.value = orderAmount
