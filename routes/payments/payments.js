@@ -7,7 +7,7 @@ const {
 } = require('../../utils/validation')
 const User = require('../../model/user')
 const { serverError } = require('../../utils/errors')
-const { validateCoupon,calculateOrderAmount,finishOrder } = require('../../utils/orderHelpers')
+const { validateCoupon,calculateOrderAmount,finishOrder,shouldShippingBeFree } = require('../../utils/orderHelpers')
 const { not } = require('@hapi/joi')
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
@@ -29,9 +29,8 @@ router.post('/webhook', async (req, res) => {
 			if (!order) {
 				return res.status(400).send(`Webhook error: invalid secret`)
 			}
-			if (!order.paid){
-				console.log('here')
-			return finishOrder(order,res)
+			if (!order.ordered){
+				return finishOrder(order,res,true)
 			}
 			
 		} catch (err) {
@@ -42,6 +41,38 @@ router.post('/webhook', async (req, res) => {
 	res.send()
 })
 
+router.all('/skip', methods(['POST']))
+router.post('/skip', async (req,res) => {
+	if (createPaymentValidation(req, res)) return
+	const {
+		orderId
+	} = req.body
+	try {
+		const order = await Order.findById(orderId)
+		if (!order) return res.status(400).send( {
+			message: 'The order id provided was invalid',
+			error: 'not-found'
+		})
+		if (order.status != 'pending') return res.status(400).send( {
+			message: 'This order is not pending',
+			error: 'not-pending'
+		})
+		if (await validateCoupon(order,res)) return
+		const shipping = await Product.findOne({name:'Doprava'})
+		if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)) order.products.push(shipping._id)
+		orderAmount = await calculateOrderAmount(order)
+		order.value = orderAmount
+		order.status = "ordered"
+		await order.save()
+		finishOrder(order,res,false)
+		res.send({
+			message: 'Payment skipped successfully',
+		});
+	} catch (err) {
+		serverError(res,err)
+	}
+})
+
 router.all('/create', methods(['POST']))
 router.post('/create', async (req, res) => {
 	if (createPaymentValidation(req, res)) return
@@ -50,23 +81,18 @@ router.post('/create', async (req, res) => {
 	} = req.body
 	try {
 		const order = await Order.findById(orderId)
-		if (!order) throw {
+		if (!order) return res.status(400).send( {
 			message: 'The order id provided was invalid',
 			error: 'not-found'
-		}
-		if (order.status == 'paid') throw {
-			message: 'This order has already been paid',
-			error: 'paid'
-		}
+		})
+		if (order.status != 'pending') return res.status(400).send( {
+			message: 'This order is not pending',
+			error: 'not-pending'
+		})
 		if (await validateCoupon(order,res)) return
-		orderAmount = await calculateOrderAmount(order)
-		console.log(orderAmount)
-		// if order below 100 add shipping cost
 		const shipping = await Product.findOne({name:'Doprava'})
-		if (orderAmount < parseInt(process.env.MINIMUM_VALUE_FREE_SHIPPING) &&  !(order.products).includes(shipping.id)){
-			order.products.push(shipping._id)
-			orderAmount = await calculateOrderAmount(order)
-		}
+		if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)) order.products.push(shipping._id)
+		orderAmount = await calculateOrderAmount(order)
 		const paymentIntent = await stripe.paymentIntents.create({
 			amount: orderAmount,
 			currency: "eur"

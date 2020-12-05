@@ -9,10 +9,11 @@ const calculateOrderAmount = async (order, ignoreCoupon = false) => {
     try {
         let totalPrice = 0;
         const products = order.products
-        products.forEach(async (product) => {
+        for (product of products){
             product = await Product.findById(product)
+            console.log(product)
             totalPrice += product.price
-        });
+        }
         const coupon = await Coupon.findOne({
             code: order.coupon
         })
@@ -32,6 +33,24 @@ const calculateOrderAmount = async (order, ignoreCoupon = false) => {
         console.log(err)
     }
 };
+
+const shouldShippingBeFree = async (order) => {
+    try{
+        let totalPoints = 0;
+        const products = order.products
+        console.log (products)
+        for (product of products){
+            product = await Product.findById(product)
+            console.log(product)
+            totalPoints += product.points
+        }
+        console.log(totalPoints,totalPoints>=process.env.MINIMUM_VALUE_FREE_SHIPPING)
+        return totalPoints>=process.env.MINIMUM_VALUE_FREE_SHIPPING
+    }
+    catch(err){
+        console.log(err)
+    }
+}
 
 const validateCoupon = async (order, res) => {
     try {
@@ -127,9 +146,10 @@ const updateSimilarProducts = async (lastProduct, user) => {
     await user.save()
 }
 
-const finishOrder = async (order, res) => {
+const finishOrder = async (order, res, paidOnline) => {
     try {
-        order.status = "paid"
+        order.status = "ordered"
+        if (paidOnline) order.paidOnline = true
         const user = await (User.findById(order.orderedBy))
         user.totalSpent += order.value;
         for (const key in order.products) {
@@ -175,5 +195,6 @@ module.exports = {
     validateCoupon,
     calculateOrderAmount,
     finishOrder,
-    refundOrder
+    refundOrder,
+    shouldShippingBeFree
 }

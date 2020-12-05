@@ -57,7 +57,12 @@ const productSchema = new mongoose.Schema({
     problemType: [{
         type: Number,
         min:0
-    }]
+    }],
+    points:{
+        type:Number,
+        default:0,
+        min:0
+    }
 }
 
 , { minimize: false })

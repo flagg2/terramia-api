@@ -64,7 +64,7 @@ router.post('/orders/:id/fulfill',verify(1),async (req,res) => {
         const order = await Order.findById(req.params.id)
         if (!order) return notFound(res,'Order')
         if (order.status == 'sent') return res.status(400).send({message:'The order has already been sent',error:'sent'})
-        if (order.status == 'pending') return res.status(400).send({message:'Cannot fulfill an unpaid order',error:'unpaid'})
+        if (order.status == 'pending') return res.status(400).send({message:'Cannot fulfill an incomplete order',error:'incomplete'})
         if (order.status == 'fulfilled') return res.status(400).send({message:'The order has already been fulfileld',error:'fulfilled'})
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
         order.status = 'fulfilled'
@@ -87,7 +87,7 @@ router.post('/orders/:id/cancel',verify(1),async (req,res) => {
         const order = await Order.findById(req.params.id)
         if (!order) return notFound(res,'Order')
         if (order.status == 'sent') return res.status(400).send({message:'The order has already been sent',error:'sent'})
-        if (order.status == 'pending') return res.status(400).send({message:'Cannot cancel an unpaid order',error:'unpaid'})
+        if (order.status == 'pending') return res.status(400).send({message:'Cannot cancel an incomplete order',error:'incomplete'})
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
         order.status = 'cancelled'
         await order.save()
@@ -109,8 +109,8 @@ router.post('/orders/:id/send',verify(1),async (req,res) => {
     try{
         const order = await Order.findById(req.params.id)
         if (!order) return notFound(res,'Order')
-        if (order.status == 'pending') return res.status(400).send({message:'Cannot send an unpaid order',error:'unpaid'})
-        if (order.status == 'paid') return res.status(400).send({message:'Cannot send an unfulfilled order',error:'unfulfilled'})
+        if (order.status == 'pending') return res.status(400).send({message:'Cannot send an incomplete order',error:'incomplete'})
+        if (order.status == 'ordered') return res.status(400).send({message:'Cannot send an unfulfilled order',error:'unfulfilled'})
         if (order.status == 'sent') return res.status(400).send({message:'The order has already been sent',error:'sent'})
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
         order.status = 'sent'

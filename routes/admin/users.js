@@ -48,7 +48,7 @@ router.post('/users', verify(1), async (req, res) => {
 })
 
 router.all('/users/pendingSamples', methods(['GET']))
-router.get('/users/pendingSamples', async (req,res) => {
+router.get('/users/pendingSamples',verify(1), async (req,res) => {
     try{
         const users = await User.find({sampleSent:false, address:{$exists:true}})
         res.send({
