@@ -82,6 +82,10 @@ const userSchema = new mongoose.Schema({
     boughtProducts:{ type: mongoose.Schema.Types.Mixed, default: {} },
     knowDoTerra:{
         type: Boolean
+    },
+    registeredInDoTerra:{
+        type:Boolean,
+        default:false
     }
 }, { minimize: false })
 

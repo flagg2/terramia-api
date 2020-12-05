@@ -8,26 +8,35 @@ const {sendOrderCompletedMail,sendNewOrderMail} = require('./mailer')
 const calculateOrderAmount = async (order, ignoreCoupon = false) => {
     try {
         let totalPrice = 0;
-        const products = order.products
-        for (product of products){
-            product = await Product.findById(product)
-            console.log(product)
-            totalPrice += product.price
+        const quants = new Object()
+        const products = []
+        for (const prod of order.products) {
+            if (quants[prod]) quants[prod] += 1
+            else quants[prod] = 1
+        }
+        for (const key in quants) {
+            const quantity = quants[key]
+            products.push(await Product.findById(key), quantity)
+        }
+        
+        for (const [index, product] of products.entries()) {
+            if (index % 2 == 1) continue
+            const actPrice = order.applyDiscount && product.points!=0 ?
+            (product.price*products[index+1]*0.75).toFixed(0) : (product.price*products[index+1])
+            totalPrice += parseInt(actPrice)
         }
         const coupon = await Coupon.findOne({
             code: order.coupon
         })
-        console.log(totalPrice)
         if (coupon && !ignoreCoupon) {
             if (coupon.type == 'flat') {
                 totalPrice -= parseInt(coupon.value)
             } else {
-                console.log(totalPrice)
                 totalPrice = Math.ceil(totalPrice - totalPrice * parseInt(coupon.value) / 100)
-                console.log(totalPrice)
             }
         }
         console.log(totalPrice)
+        totalPrice = parseInt(totalPrice.toFixed(0))
         return totalPrice < 0 ? 0 : totalPrice;
     } catch (err) {
         console.log(err)
@@ -39,9 +48,8 @@ const shouldShippingBeFree = async (order) => {
         let totalPoints = 0;
         const products = order.products
         console.log (products)
-        for (product of products){
-            product = await Product.findById(product)
-            console.log(product)
+        for (productID of products){
+            const product = await Product.findById(productID)
             totalPoints += product.points
         }
         console.log(totalPoints,totalPoints>=process.env.MINIMUM_VALUE_FREE_SHIPPING)
@@ -176,6 +184,7 @@ const finishOrder = async (order, res, paidOnline) => {
         }
         sendOrderCompletedMail(user.email, order)
         sendNewOrderMail(order, user)
+        user.registeredInDoTerra = true
         await user.save()
         await order.save()
         return res.send()
