@@ -59,6 +59,15 @@ module.exports = (router) => {
                 ...req.body,
                 orderedBy: req.body.userId
             })
+
+            if (req.body.applyDiscount){
+                if(user.registeredInDoTerra) return res.status(400).send({
+                    message:'This user has already redeemed their discount',
+                    error:'redeemed'
+                })
+                order.applyDiscount = true
+            }
+
             //apply coupons
             if (await validateCoupon(order,res)) return
             

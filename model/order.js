@@ -54,6 +54,10 @@ const orderSchema = new mongoose.Schema({
     paidOnline:{
         type:Boolean,
         default:false
+    },
+    applyDiscount:{
+        type:Boolean,
+        default:false
     }
 })
 

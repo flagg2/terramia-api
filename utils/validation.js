@@ -181,7 +181,8 @@ const orderValidation = (req, res) => {
             country: Joi.string().min(6).max(30),
             city: Joi.string().max(50),
         }),
-        coupon: Joi.string().max(20)
+        coupon: Joi.string().max(20),
+        applyDiscount: Joi.boolean()
     })
     try {
         if (!mongoose.Types.ObjectId.isValid(req.body.userId)) {

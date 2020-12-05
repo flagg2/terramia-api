@@ -151,7 +151,6 @@ const prepareOrderHelpers = async (order) => {
     for (const [index, product] of products.entries()) {
         let imageHtml = ''
         if (index % 2 == 1) continue
-        orderSum += product.price * products[index + 1]
         if (product.imagePath) {
             attachments.push({
                 filename: `${product.imagePath}`,
@@ -170,12 +169,15 @@ const prepareOrderHelpers = async (order) => {
             }
             imageHtml = `<td class="productImg"><img src="cid:placeholder"></td>`
         }
+        const actPrice = order.applyDiscount && product.points!=0 ?
+        (product.price/100*products[index+1]*0.75).toFixed(2) : (product.price/100*products[index+1]).toFixed(2)
+        orderSum += parseInt(actPrice)
         string += `
                         <tr>
                         ${imageHtml}
                         <td class="productName">${product.name}</td>
                         <td class="productQuant">${products[index+1]}</td>
-                        <td class="productPrice">${(product.price/100*products[index+1]).toFixed(2)}€</td>
+                        <td class="productPrice">${actPrice}€</td>
                         </tr>`
     }
     string += '</table></div>'
