@@ -121,9 +121,9 @@ const sendRecoveryMail = async (receiverAdress, user) => {
 }
 const prettyPrint = (price) => {
     if (parseInt(price) == 0){
-        return 'zdarma'
+        return 'Zadarmo'
     }
-    return price
+    return `${price}€`
 }
 
 const prepareOrderHelpers = async (order) => {
@@ -183,7 +183,7 @@ const prepareOrderHelpers = async (order) => {
                         ${imageHtml}
                         <td class="productName">${product.name}</td>
                         <td class="productQuant">${products[index+1]}</td>
-                        <td class="productPrice">${prettyPrint(actPrice)}€</td>
+                        <td class="productPrice">${prettyPrint(actPrice)}</td>
                         </tr>`
     }
     string += '</table></div>'
@@ -196,7 +196,7 @@ const prepareOrderHelpers = async (order) => {
     const discString = coupon ? `    
                             <tr class='disc'>
                                 <td class="total-sum">Suma pred zľavou</td>
-                                <td class="total-price">${prettyPrint((orderSum/100).toFixed(2))}€</td>
+                                <td class="total-price">${prettyPrint((orderSum/100).toFixed(2))}</td>
                             </tr>
                      
                             <tr>
