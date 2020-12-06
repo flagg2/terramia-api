@@ -60,14 +60,22 @@ router.post('/skip', async (req,res) => {
 		if (await validateCoupon(order,res)) return
 		const shipping = await Product.findOne({name:'Doprava'})
 		orderAmount = await calculateOrderAmount(order)
-		if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)) order.products.push(shipping._id)
+		let freeShipping = true
+		if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)){
+			order.products.push(shipping._id)
+			freeShipping = false
+	   }
 		orderAmount = await calculateOrderAmount(order)
 		order.value = orderAmount
 		order.status = "ordered"
 		await order.save()
+		const wwd = await calculateOrderAmount(order,undefined,true)
 		finishOrder(order,res,false)
 		res.send({
 			message: 'Payment skipped successfully',
+			value:order.value,
+			freeShipping:freeShipping,
+			valueWithoutDiscount: wwd
 		});
 	} catch (err) {
 		serverError(res,err)
@@ -92,7 +100,11 @@ router.post('/create', async (req, res) => {
 		})
 		if (await validateCoupon(order,res)) return
 		const shipping = await Product.findOne({name:'Doprava'})
-		if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)) order.products.push(shipping._id)
+		let freeShipping = true
+		if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)){
+			 order.products.push(shipping._id)
+			 freeShipping = false
+		}
 		orderAmount = await calculateOrderAmount(order)
 		const paymentIntent = await stripe.paymentIntents.create({
 			amount: orderAmount,
@@ -100,10 +112,14 @@ router.post('/create', async (req, res) => {
 		});
 		order.clientSecret = paymentIntent.client_secret;
 		order.value = orderAmount
+		const wwd = await calculateOrderAmount(order,undefined,true)
 		await order.save()
 		res.send({
 			message: 'Payment intent created successfully',
-			clientSecret: paymentIntent.client_secret
+			clientSecret: paymentIntent.client_secret,
+			value:order.value,
+			freeShipping:freeShipping,
+			valueWithoutDiscount: wwd
 		});
 	} catch (err) {
 		serverError(res,err)
