@@ -91,8 +91,6 @@ router.post('/create', async (req, res) => {
 			currency: "eur"
 		});
 		order.clientSecret = paymentIntent.client_secret;
-		order.value = orderAmount
-		const wwd = await calculateOrderAmount(order,undefined,true)
 		await order.save()
 		res.send({
 			message: 'Payment intent created successfully',
