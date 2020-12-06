@@ -5,7 +5,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const {serverError} = require('./errors');
 const {sendOrderCompletedMail,sendNewOrderMail} = require('./mailer')
 
-const calculateOrderAmount = async (order, ignoreCoupon = false) => {
+const calculateOrderAmount = async (order, ignoreCoupon = false, ignoreDiscount = false) => {
     try {
         let totalPrice = 0;
         const quants = new Object()
@@ -21,7 +21,7 @@ const calculateOrderAmount = async (order, ignoreCoupon = false) => {
         
         for (const [index, product] of products.entries()) {
             if (index % 2 == 1) continue
-            const actPrice = order.applyDiscount && product.points!=0 ?
+            const actPrice = order.applyDiscount && product.points!=0 && !ignoreDiscount?
             (product.price*products[index+1]*0.75).toFixed(0) : (product.price*products[index+1])
             totalPrice += parseInt(actPrice)
         }
