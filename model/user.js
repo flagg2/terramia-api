@@ -86,6 +86,9 @@ const userSchema = new mongoose.Schema({
     registeredInDoTerra:{
         type:Boolean,
         default:false
+    },
+    birthDate:{
+        type:String
     }
 }, { minimize: false })
 
