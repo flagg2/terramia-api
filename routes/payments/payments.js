@@ -58,24 +58,11 @@ router.post('/skip', async (req,res) => {
 			error: 'not-pending'
 		})
 		if (await validateCoupon(order,res)) return
-		const shipping = await Product.findOne({name:'Doprava'})
-		orderAmount = await calculateOrderAmount(order)
-		let freeShipping = true
-		if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)){
-			order.products.push(shipping._id)
-			freeShipping = false
-	   }
-		orderAmount = await calculateOrderAmount(order)
-		order.value = orderAmount
 		order.status = "ordered"
 		await order.save()
-		const wwd = await calculateOrderAmount(order,undefined,true)
 		finishOrder(order,res,false)
 		res.send({
-			message: 'Payment skipped successfully',
-			value:order.value,
-			freeShipping:freeShipping,
-			valueWithoutDiscount: wwd
+			message: 'Payment skipped successfully'
 		});
 	} catch (err) {
 		serverError(res,err)
@@ -99,15 +86,8 @@ router.post('/create', async (req, res) => {
 			error: 'not-pending'
 		})
 		if (await validateCoupon(order,res)) return
-		const shipping = await Product.findOne({name:'Doprava'})
-		let freeShipping = true
-		if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)){
-			 order.products.push(shipping._id)
-			 freeShipping = false
-		}
-		orderAmount = await calculateOrderAmount(order)
 		const paymentIntent = await stripe.paymentIntents.create({
-			amount: orderAmount,
+			amount: order.value,
 			currency: "eur"
 		});
 		order.clientSecret = paymentIntent.client_secret;
@@ -116,10 +96,7 @@ router.post('/create', async (req, res) => {
 		await order.save()
 		res.send({
 			message: 'Payment intent created successfully',
-			clientSecret: paymentIntent.client_secret,
-			value:order.value,
-			freeShipping:freeShipping,
-			valueWithoutDiscount: wwd
+			clientSecret: paymentIntent.client_secret
 		});
 	} catch (err) {
 		serverError(res,err)
