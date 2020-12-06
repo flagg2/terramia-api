@@ -61,6 +61,11 @@ module.exports = (router) => {
             })
 
             if (req.body.applyDiscount){
+                if (!req.body.birthDate) return res.status(400).send({
+                    message:'You need to provide a birth date if you want a discount',
+                    error:'no-birth-date'
+                })
+                user.birthDate = req.body.birthDate
                 if(user.registeredInDoTerra) return res.status(400).send({
                     message:'This user has already redeemed their discount',
                     error:'redeemed'

@@ -69,7 +69,7 @@ router.post('/orders/:id/fulfill',verify(1),async (req,res) => {
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
         order.status = 'fulfilled'
         const user = await User.findById(order.orderedBy)
-        await sendOrderProcessedMail(user.email,order.id)
+        await sendOrderProcessedMail(user.email,order)
         await order.save()
         res.send({
             message:'Order fulfilled successfully',
@@ -115,7 +115,7 @@ router.post('/orders/:id/send',verify(1),async (req,res) => {
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
         order.status = 'sent'
         const user = await User.findById(order.orderedBy)
-        await sendOrderSentMail(user.email,order.id)
+        await sendOrderSentMail(user.email,order)
         await order.save()
         res.send({
             message:'Order sent successfully',
