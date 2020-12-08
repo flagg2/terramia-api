@@ -76,7 +76,8 @@ const getFilteredProductsValidation = (req, res) => {
             type: Joi.number().min(1).max(16),
             available: Joi.boolean(),
             topProduct: Joi.boolean(),
-            problemType: Joi.number()
+            problemType: Joi.number(),
+            eshop: Joi.boolean()
         }),
         sortBy: Joi.object({
             price: Joi.number().valid(-1, 1),
@@ -102,7 +103,8 @@ const getFilteredOrdersValidation = (req, res) => {
     const Joischema = Joi.object({
         filters: Joi.object({
             status: Joi.string().valid('ordered','fulfilled','pending','cancelled','sent'),
-            orderedBy: Joi.string().max(20)
+            orderedBy: Joi.string().max(20),
+            value:Joi.number().min(0)
         }),
         sortBy: Joi.object({
             value: Joi.number().valid(-1, 1),
