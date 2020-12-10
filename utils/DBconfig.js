@@ -17,4 +17,19 @@ const createTransportProduct = async () => {
         console.log('Created transport product.')
     }
 }
+const createPODProduct = async () => {
+    const pod = await Product.findOne({name:'Dobierka'})
+    if(!pod){
+        const pod = new Product({
+            type:1,
+            name:'Dobierka',
+            price:200,
+            imagePath:'dobierka.png',
+            eshop:false
+        })
+        await pod.save()
+    console.log('Created pod product.')
+    }
+}
 createTransportProduct()
+createPODProduct()
