@@ -234,7 +234,7 @@ const registerValidation = (req, res) => {
 const preRegisterValidation = (req,res) => {
     const Joischema = Joi.object({
         email: Joi.string().min(6).max(255).required().email(),
-        knowDoTerra: Joi.boolean().required(),
+        registeredInDoTerra: Joi.boolean().required(),
         sampleType: Joi.number().min(1).max(9).required(),
     })
     return validate(req,res,Joischema)

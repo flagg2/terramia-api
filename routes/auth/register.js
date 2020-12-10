@@ -28,7 +28,8 @@ module.exports = (router) => {
             return res.status(409).send({
                 message: 'Email already exists',
                 type: 'email',
-                error: 'exists'
+                error: 'exists',
+                regStep: user.regStep
             })
         }
         const user = new User({
