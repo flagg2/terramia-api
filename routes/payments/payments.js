@@ -57,6 +57,11 @@ router.post('/skip', async (req,res) => {
 			message: 'This order is not pending',
 			error: 'not-pending'
 		})
+		const pod = await Product.findOne({name:'Dobierka'})
+            if (!(order.products).includes(pod.id)){
+				order.products.push(pod._id)
+				order.value+=200
+           }
 		if (await validateCoupon(order,res)) return
 		order.status = "ordered"
 		await order.save()
