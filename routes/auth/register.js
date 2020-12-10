@@ -74,7 +74,8 @@ module.exports = (router) => {
             const result = await User.updateOne({
                 email: req.body.email
             }, {
-                ...req.body
+                ...req.body,
+                regStep:1
             })
             const user2 = await User.findOne({email:req.body.email})
             sendNewUserSummaryMail(user2)
@@ -103,10 +104,12 @@ module.exports = (router) => {
                 error: 'reg-finished'
             })
             user.registrationCode = crypto.randomBytes(12).toString('hex')
+            user.regStep = 2
             const savedUser = await user.save()
             sendCodeVerificationMail(user.email, user)
             res.send({
-                message: 'Register code sent successfully'
+                message: 'Register code sent successfully',
+                user:savedUser
             })
 
         } catch (err) {
@@ -137,7 +140,8 @@ module.exports = (router) => {
             const salt = await bcrypt.genSalt(10)
             const hashPassword = await bcrypt.hash(req.body.password, salt)
             const result = await User.updateOne({
-                email: req.body.email
+                email: req.body.email,
+                regStep:3
             }, {
                 password: hashPassword
             })

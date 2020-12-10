@@ -89,6 +89,10 @@ const userSchema = new mongoose.Schema({
     },
     birthDate:{
         type:String
+    },
+    regStep:{
+        type:Number,
+        default:0
     }
 }, { minimize: false })
 
