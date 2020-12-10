@@ -344,7 +344,51 @@ const createMessageValidation = (req,res) => {
     return validate(req,res,Joischema)
 }
 
+const createBlogValidation = (req,res) => {
+    const Joischema = Joi.object({
+        name: Joi.string().required(),
+        description: Joi.string().required(),
+        html:Joi.string().required(),
+        draft: Joi.boolean(),
+        type:Joi.number().required(),
+        locked:Joi.boolean()
+    })
+    return validate(req,res,Joischema)
+}
+
+const patchBlogValidation = (req,res) => {
+    const Joischema = Joi.object({
+        name: Joi.string(),
+        description: Joi.string(),
+        html: Joi.string(),
+        draft: Joi.boolean(),
+        type:Joi.number().required(),
+        locked:Joi.boolean()
+    })
+    return validate(req,res,Joischema)
+}
+
+const getFilteredBlogsValidation = (req,res) => {
+    const Joischema = Joi.object({
+        filters: Joi.object({
+            name: Joi.string(),
+            locked: Joi.boolean(),
+            draft: Joi.boolean(),
+            type: Joi.number()
+        }),
+        sortBy: Joi.object({
+            date: Joi.number().valid(-1,1)
+        }),
+        limit: Joi.number().min(0),
+        query: Joi.string(),
+    })
+    return validate(req,res,Joischema)
+}
+
 module.exports = {
+    createBlogValidation,
+    patchBlogValidation,
+    getFilteredBlogsValidation,
     requestSamplesValidation,
     getFilteredUsersValidation,
     registerValidation,

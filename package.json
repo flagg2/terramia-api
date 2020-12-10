@@ -27,6 +27,7 @@
     "nodemailer": "^6.4.14",
     "nodemon": "^2.0.6",
     "password-validator": "^5.1.0",
+    "sanitize-html": "^2.2.0",
     "sharp": "^0.26.3",
     "stripe": "^8.111.0"
   },

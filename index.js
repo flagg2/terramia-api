@@ -16,6 +16,7 @@ const notFoundRoute = require('./routes/notfound/notfound')
 const storeRoute = require('./routes/store/store')
 const paymentRoute = require('./routes/payments/payments')
 const contactRoute = require('./routes/contact/contact')
+const blogRoute = require('./routes/blog/blog')
 
 
 //Connect to DB
@@ -55,6 +56,7 @@ app.use('/uploads',express.static('./uploads'))
 //Route MiddleWares
 app.use('/api/auth', authRoute)
 app.use('/api/user', userRoute)
+app.use('/api/blogs', blogRoute)
 app.use('/api/admin', adminRoute)
 app.use('/api/store', storeRoute)
 app.use('/api/payments', paymentRoute)
