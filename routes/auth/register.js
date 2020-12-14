@@ -22,14 +22,16 @@ module.exports = (router) => {
     router.all('/register/pre', methods(['POST']))
     router.post('/register/pre', async (req, res) => {
         if (preRegisterValidation(req, res)) return
-        if (await User.findOne({
-                email: req.body.email
-            })) {
+        const usero = await User.findOne({
+            email: req.body.email
+        })
+        console.log(usero)
+        if (usero) {
             return res.status(409).send({
                 message: 'Email already exists',
                 type: 'email',
                 error: 'exists',
-                regStep: user.regStep
+                regStep: usero.regStep
             })
         }
         const user = new User({
