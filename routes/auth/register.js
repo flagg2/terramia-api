@@ -144,13 +144,16 @@ module.exports = (router) => {
             const hashPassword = await bcrypt.hash(req.body.password, salt)
             const result = await User.updateOne({
                 email: req.body.email,
-                regStep:3
             }, {
-                password: hashPassword
+                password: hashPassword,
+                regStep:3
             })
-            await user.save()
+            const savedUser = await User.findOne({
+                email: req.body.email
+            })
             res.send({
-                message: 'User registered successfully'
+                message: 'User registered successfully',
+                user:savedUser
             })
         } catch (err) {
             serverError(res, err)
