@@ -194,6 +194,7 @@ const orderValidation = (req, res) => {
         coupon: Joi.string().max(20),
         applyDiscount: Joi.boolean(),
         shouldDeliver: Joi.boolean(),
+        buyingAsCompany : Joi.boolean(),
         birthDate: Joi.string()
     })
     try {
