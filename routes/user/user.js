@@ -88,7 +88,8 @@ router.patch('/profile', verify(0), async (req, res) => {
          'address',
          'city',
          'psc',
-         'country'
+         'country',
+         'company'
     ]
     try {
         //update user
