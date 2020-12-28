@@ -58,7 +58,7 @@ router.post('/skip', async (req,res) => {
 			error: 'not-pending'
 		})
 		const pod = await Product.findOne({name:'Dobierka'})
-            if (!(order.products).includes(pod.id)){
+            if (!(order.products).includes(pod.id) && (order.value)!=0){
 				order.products.push(pod._id)
 				order.value+=200
            }

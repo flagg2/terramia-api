@@ -77,7 +77,7 @@ module.exports = (router) => {
             if (await validateCoupon(order,res)) return
             let freeShipping = true
             const shipping = await Product.findOne({name:'Doprava'})
-            if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id)){
+            if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id) && order.shouldDeliver !== false){
                 order.products.push(shipping._id)
                 freeShipping = false
            }

@@ -45,7 +45,8 @@ const newProductValidation = (req, res) => {
         available: Joi.boolean(),
         topProduct: Joi.boolean(),
         problemType: Joi.array().items(Joi.number()),
-        points:Joi.number().min(0)
+        points:Joi.number().min(0),
+        tips: Joi.array().items(Joi.string())
     })
     return validate(req, res, Joischema)
 }
@@ -62,7 +63,8 @@ const patchProductValidation = (req, res) => {
         available: Joi.boolean(),
         topProduct: Joi.boolean(),
         problemType: Joi.array().items(Joi.number()),
-        points:Joi.number().min(0)
+        points:Joi.number().min(0),
+        tips: Joi.array().items(Joi.string())
     })
     return validate(req, res, Joischema)
 }
@@ -142,6 +144,12 @@ const tempUserValidation = (req, res) => {
         psc: Joi.string().min(3).max(10).required(),
         country: Joi.string().max(30).required(),
         city: Joi.string().max(50).required(),
+        company: Joi.object({
+            name:Joi.string(),
+            ico:Joi.string(),
+            dic:Joi.string(),
+            icdph:Joi.string()
+        })
     })
     return validate(req, res, Joischema)
 }
@@ -314,7 +322,13 @@ const patchProfileValidation = (req, res) => {
         address: Joi.string().max(50),
         psc: Joi.string().min(3).max(10),
         city: Joi.string().max(50),
-        country: Joi.string().max(50)
+        country: Joi.string().max(50),
+        company: Joi.object({
+            name:Joi.string(),
+            ico:Joi.string(),
+            dic:Joi.string(),
+            icdph:Joi.string()
+        })
 
     })
     return validate(req, res, Joischema)

@@ -93,6 +93,20 @@ const userSchema = new mongoose.Schema({
     regStep:{
         type:Number,
         default:0
+    },
+    company:{
+        name:{
+            type:String
+        },
+        ico:{
+            type:String
+        },
+        icdph:{
+            type:String
+        },
+        dic:{
+            type:String
+        }
     }
 }, { minimize: false })
 
