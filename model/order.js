@@ -58,6 +58,10 @@ const orderSchema = new mongoose.Schema({
     applyDiscount:{
         type:Boolean,
         default:false
+    },
+    shouldDeliver:{
+        type:Boolean,
+        default:true
     }
 })
 
