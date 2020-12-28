@@ -62,6 +62,10 @@ const orderSchema = new mongoose.Schema({
     shouldDeliver:{
         type:Boolean,
         default:true
+    },
+    buyingAsCompany:{
+        type:Boolean,
+        default:false
     }
 })
 
