@@ -60,9 +60,9 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default:0
     },
-    sampleSent:{
-        type: Boolean,
-        default: false
+    sampleId:{
+        type: String,
+        ref: 'Product'
     },
     sampleType:{
         type: Number,
