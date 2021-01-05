@@ -23,7 +23,8 @@ module.exports = (router) => {
     router.post('/register/pre', async (req, res) => {
         if (preRegisterValidation(req, res)) return
         const usero = await User.findOne({
-            email: req.body.email
+            email: req.body.email,
+            tempUser:false
         })
         console.log(usero)
         if (usero) {
@@ -65,7 +66,8 @@ module.exports = (router) => {
             })
             if (req.body.phone) {
                 if (await User.findOne({
-                        phone: req.body.phone
+                        phone: req.body.phone,
+                        tempUser:false
                     })) {
                     return res.status(409).send({
                         message: 'Phone number already exists',

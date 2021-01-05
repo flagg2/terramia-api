@@ -107,6 +107,10 @@ const userSchema = new mongoose.Schema({
         dic:{
             type:String
         }
+    },
+    tempUser:{
+        type:Boolean,
+        default:false
     }
 }, { minimize: false })
 

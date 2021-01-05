@@ -13,7 +13,8 @@ module.exports = (router) => {
         if (tempUserValidation(req, res)) return
         try {
             const user = new User({
-                ...req.body
+                ...req.body,
+                tempUser:true
             })
             const tempUser = await user.save()
             res.send({
