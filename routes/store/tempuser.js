@@ -12,6 +12,10 @@ module.exports = (router) => {
     router.post('/tempUser', async (req, res) => {
         if (tempUserValidation(req, res)) return
         try {
+            await User.findOneAndDelete({
+                email:req.body.email,
+                tempUser:true
+            })
             const user = new User({
                 ...req.body,
                 tempUser:true
