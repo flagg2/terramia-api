@@ -23,7 +23,8 @@ module.exports = (router) => {
     router.post('/register/pre', async (req, res) => {
         if (preRegisterValidation(req, res)) return
         const usero = await User.findOne({
-            email: req.body.email
+            email: req.body.email,
+            tempUser:false
         })
         console.log(usero)
         if (usero) {
@@ -52,7 +53,8 @@ module.exports = (router) => {
         if (billingRegisterValidation(req, res)) return
         try {
             let user = await User.findOne({
-                email: req.body.email
+                email: req.body.email,
+                tempUser:false
             })
             if (!user) return notFound(res, 'User')
             if (user.address) return res.status(400).send({
@@ -65,7 +67,8 @@ module.exports = (router) => {
             })
             if (req.body.phone) {
                 if (await User.findOne({
-                        phone: req.body.phone
+                        phone: req.body.phone,
+                        tempUser:false
                     })) {
                     return res.status(409).send({
                         message: 'Phone number already exists',
@@ -80,7 +83,8 @@ module.exports = (router) => {
                 ...req.body,
                 regStep:1
             })
-            const user2 = await User.findOne({email:req.body.email})
+            const user2 = await User.findOne({email:req.body.email,
+                tempUser:false})
             sendNewUserSummaryMail(user2)
             res.send({
                 message: 'Billing details added succesfully'
@@ -95,7 +99,8 @@ module.exports = (router) => {
         if (sendCodeRegisterValidation(req, res)) return
         try {
             const user = await User.findOne({
-                email: req.body.email
+                email: req.body.email,
+                tempUser:false
             })
             if (!user) return notFound(res, 'User')
             if (!user.address) return res.status(400).send({
@@ -125,7 +130,8 @@ module.exports = (router) => {
         if (finishRegisterValidation(req, res)) return
         try {
             const user = await User.findOne({
-                email: req.body.email
+                email: req.body.email,
+                tempUser:false
             })
             if (!user) return notFound(res, 'User')
             if (!user.address) return res.status(400).send({
@@ -149,7 +155,8 @@ module.exports = (router) => {
                 regStep:3
             })
             const savedUser = await User.findOne({
-                email: req.body.email
+                email: req.body.email,
+                tempUser:false
             })
             res.send({
                 message: 'User registered successfully',
