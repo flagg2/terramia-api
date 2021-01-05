@@ -99,7 +99,8 @@ router.patch('/profile', verify(0), async (req, res) => {
                 //check if email exists
                 if (prop == 'email') {
                     const userByReq = await User.findOne({
-                        email: req.body.email
+                        email: req.body.email,
+                        tempUser:false
                     })
                     if (userByReq && userByReq.email != user.email) {
                         return res.status(409).send({
@@ -112,7 +113,8 @@ router.patch('/profile', verify(0), async (req, res) => {
                 //check if phone exists
                 else if (prop == 'phone') {
                     const userByReq = await User.findOne({
-                        phone: req.body.phone
+                        phone: req.body.phone,
+                        tempUser:false
                     })
                     if (userByReq && userByReq.phone != user.phone) {
                         return res.status(409).send({

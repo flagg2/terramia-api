@@ -53,7 +53,8 @@ module.exports = (router) => {
         if (billingRegisterValidation(req, res)) return
         try {
             let user = await User.findOne({
-                email: req.body.email
+                email: req.body.email,
+                tempUser:false
             })
             if (!user) return notFound(res, 'User')
             if (user.address) return res.status(400).send({
@@ -82,7 +83,8 @@ module.exports = (router) => {
                 ...req.body,
                 regStep:1
             })
-            const user2 = await User.findOne({email:req.body.email})
+            const user2 = await User.findOne({email:req.body.email,
+                tempUser:false})
             sendNewUserSummaryMail(user2)
             res.send({
                 message: 'Billing details added succesfully'
@@ -97,7 +99,8 @@ module.exports = (router) => {
         if (sendCodeRegisterValidation(req, res)) return
         try {
             const user = await User.findOne({
-                email: req.body.email
+                email: req.body.email,
+                tempUser:false
             })
             if (!user) return notFound(res, 'User')
             if (!user.address) return res.status(400).send({
@@ -127,7 +130,8 @@ module.exports = (router) => {
         if (finishRegisterValidation(req, res)) return
         try {
             const user = await User.findOne({
-                email: req.body.email
+                email: req.body.email,
+                tempUser:false
             })
             if (!user) return notFound(res, 'User')
             if (!user.address) return res.status(400).send({
@@ -151,7 +155,8 @@ module.exports = (router) => {
                 regStep:3
             })
             const savedUser = await User.findOne({
-                email: req.body.email
+                email: req.body.email,
+                tempUser:false
             })
             res.send({
                 message: 'User registered successfully',
