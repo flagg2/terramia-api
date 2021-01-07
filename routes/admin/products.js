@@ -180,7 +180,7 @@ module.exports = (router) => {
                     error: 'sold-amount-not-null'
                 })
             }
-            Product.findByIdAndDelete(req.params.id)
+            Product.findByIdAndDelete(req.params.id,()=>{})
             res.send({
                 message: 'Deleted successfully'
             })
