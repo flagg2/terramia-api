@@ -7,9 +7,14 @@ const {
     idValidation,
     orderValidation
 } = require('../../utils/validation')
-const {validateCoupon,shouldShippingBeFree,calculateOrderAmount} = require('../../utils/orderHelpers')
 const {
-    notFound, serverError
+    validateCoupon,
+    shouldShippingBeFree,
+    calculateOrderAmount
+} = require('../../utils/orderHelpers')
+const {
+    notFound,
+    serverError
 } = require('../../utils/errors')
 
 
@@ -50,7 +55,7 @@ module.exports = (router) => {
                 })
                 // is product available
                 if (!prod.available) return res.status(400).send({
-                    error:'not-available',
+                    error: 'not-available',
                     message: 'One or more of the requested products were unavailable'
                 })
             }
@@ -60,28 +65,40 @@ module.exports = (router) => {
                 orderedBy: req.body.userId
             })
 
-            if (req.body.applyDiscount){
+            if (req.body.applyDiscount) {
                 if (!req.body.birthDate) return res.status(400).send({
-                    message:'You need to provide a birth date if you want a discount',
-                    error:'no-birth-date'
+                    message: 'You need to provide a birth date if you want a discount',
+                    error: 'no-birth-date'
                 })
                 user.birthDate = req.body.birthDate
-                if(user.registeredInDoTerra) return res.status(400).send({
-                    message:'This user has already redeemed their discount',
-                    error:'redeemed'
+                if (user.registeredInDoTerra) return res.status(400).send({
+                    message: 'This user has already redeemed their discount',
+                    error: 'redeemed'
                 })
                 order.applyDiscount = true
             }
 
             //apply coupons
-            if (await validateCoupon(order,res)) return
+            if (await validateCoupon(order, res)) return
             let freeShipping = true
-            const shipping = await Product.findOne({name:'Doprava'})
-            if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id) && order.shouldDeliver !== false){
+            if (!req.body.applyDiscount) {
+                const shipping = await Product.findOne({
+                    name: 'Doprava'
+                })
+                if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id) && order.shouldDeliver !== false) {
+                    order.products.push(shipping._id)
+                    freeShipping = false
+                }
+            } else {
+                const shipping = await Product.findOne({
+                    name: 'Doprava2'
+                })
+                if (!!(order.products).includes(shipping.id)) {}
                 order.products.push(shipping._id)
                 freeShipping = false
-           }
-            const wwd = await calculateOrderAmount(order,undefined,true)
+            }
+
+            const wwd = await calculateOrderAmount(order, undefined, true)
             const orderAmount = await calculateOrderAmount(order)
             order.value = orderAmount
             const savedOrder = await order.save()
@@ -91,12 +108,12 @@ module.exports = (router) => {
             res.send({
                 message: 'New order created successfully',
                 orderId: savedOrder._id,
-                value:order.value,
-                freeShipping:freeShipping,
+                value: order.value,
+                freeShipping: freeShipping,
                 valueWithoutDiscount: wwd
             })
         } catch (err) {
-            serverError(res,err)
+            serverError(res, err)
         }
     })
 

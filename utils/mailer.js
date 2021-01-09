@@ -22,6 +22,7 @@ handlebars.registerHelper("img", function (src, cls) {
 
 const createTransport = async () => {
     let transport
+    console.log('Creating SMTP transport...')
     try{
         transport =  nodemailer.createTransport({
             pool: true,
@@ -33,14 +34,14 @@ const createTransport = async () => {
                 pass: process.env.EMAIL_PASSWORD
             }
         })
+        console.log(`Transport: ${transport}`)
     }
     catch {
         console.log('Creating transport failed, retrying in 20 seconds...')
-        setTimeout(()=>{
+        setTimeout(async ()=>{
             transport = await createTransport()
         },20000)
     }
-    return transport
 }
 
 var readHTMLFile = (path, callback) => {
