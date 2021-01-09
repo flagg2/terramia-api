@@ -106,7 +106,25 @@ const userSchema = new mongoose.Schema({
         },
         dic:{
             type:String
-        }
+        },
+        address: {
+            type: String,
+            max: 50
+        },
+        city: {
+            type: String,
+            max: 50
+        },
+        psc: {
+            type: String,
+            min: 4,
+            max: 10
+        },
+        country: {
+            type: String,
+            min: 6,
+            max: 30
+        },
     },
     tempUser:{
         type:Boolean,

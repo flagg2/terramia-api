@@ -82,14 +82,8 @@ router.patch('/profile', verify(0), async (req, res) => {
 
     //properties ktore je mozne zmenit 
     const props = [
-         'name',
          'email',
-         'phone',
-         'address',
-         'city',
-         'psc',
-         'country',
-         'company'
+         'phone'
     ]
     try {
         //update user
@@ -124,14 +118,13 @@ router.patch('/profile', verify(0), async (req, res) => {
                         })
                     }
                 }
-                user[prop] = req.body[prop]
             }
         }
-        console.log(user)
-        const su = await user.save()
-        console.log(su)
+        await User.findByIdAndUpdate(req.user._id,{...req.body})
+        const su = await User.findById(req.user._id).select('-password -resetSecret')
         res.send({
-            message: 'Records updated successfully'
+            message: 'Records updated successfully',
+            user: su
         })
     } catch (err) {
         serverError(res,err)
