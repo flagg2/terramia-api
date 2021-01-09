@@ -42,6 +42,7 @@ const createTransport = async () => {
             transport = await createTransport()
         },20000)
     }
+    return transport
 }
 
 var readHTMLFile = (path, callback) => {
