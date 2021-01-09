@@ -148,7 +148,7 @@ module.exports = (router) => {
         try{
             const product = await Product.findById(req.params.id)
             if (!product) return notFound(res,'Product')
-            await Product.findByIdAndUpdate(req.params.id)
+            await Product.findByIdAndUpdate(req.params.id,{...req.body})
             return res.send(
                 {
                     message:'Product patched successfully'

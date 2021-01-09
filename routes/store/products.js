@@ -22,7 +22,7 @@ module.exports = (router) => {
     router.get('/products', async (req, res) => {
         try {
             const products = await Product.find({
-                name: {$not: {$eq: 'Doprava'}},
+                name: {$not: {$in: ['Doprava','Dobierka','Doprava2']}},
                 eshop: true
             })
             res.send({
@@ -40,7 +40,7 @@ module.exports = (router) => {
         try {
             const products = await Product.find({
                 ...req.body.filters,
-                name: {$not: {$eq: 'Doprava'}},
+                name: {$not: {$in: ['Doprava','Dobierka','Doprava2']}},
             }).limit(req.body.limit).sort(req.body.sortBy)
             if (req.body.query) {
                 const searchResults = smartSearch(req.body.query, products)

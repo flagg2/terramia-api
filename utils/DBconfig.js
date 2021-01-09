@@ -18,6 +18,21 @@ const createTransportProduct = async () => {
         console.log('Created transport product.')
     }
 }
+const createTransportProduct2 = async () => {
+    const tran = await Product.findOne({name:'Doprava2'})
+    if (!tran) {
+        const transport = new Product({
+            type:1,
+            name:'Doprava2',
+            price:840,
+            imagePath:'doprava.png',
+            eshop:false,
+            isDoTerraProduct:false
+        })
+        await transport.save()
+        console.log('Created transport product.')
+    }
+}
 const createPODProduct = async () => {
     const pod = await Product.findOne({name:'Dobierka'})
     if(!pod){
@@ -34,4 +49,5 @@ const createPODProduct = async () => {
     }
 }
 createTransportProduct()
+createTransportProduct2()
 createPODProduct()

@@ -20,17 +20,28 @@ handlebars.registerHelper("img", function (src, cls) {
     return new handlebars.SafeString(`<img class=${cls} src="cid:${src}">`);
 });
 
-const createTransport = () => {
-    return nodemailer.createTransport({
-        pool: true,
-        host: "smtp.websupport.sk",
-        port: 465,
-        secure: true, // use TLS
-        auth: {
-            user: process.env.EMAIL_ADDRESS,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    })
+const createTransport = async () => {
+    let transport
+    console.log('Creating SMTP transport...')
+    try{
+        transport =  nodemailer.createTransport({
+            pool: true,
+            host: "smtp.websupport.sk",
+            port: 465,
+            secure: true, // use TLS
+            auth: {
+                user: process.env.EMAIL_ADDRESS,
+                pass: process.env.EMAIL_PASSWORD
+            }
+        })
+        console.log(`Transport: ${transport}`)
+    }
+    catch {
+        console.log('Creating transport failed, retrying in 20 seconds...')
+        setTimeout(async ()=>{
+            transport = await createTransport()
+        },20000)
+    }
 }
 
 var readHTMLFile = (path, callback) => {
@@ -46,7 +57,7 @@ var readHTMLFile = (path, callback) => {
 }
 
 const sendWelcomeEmail = async (receiverAdress, user) => {
-    const transporter = createTransport()
+    const transporter = await createTransport()
     const link = `${process.env.PASSWORD_RESET_LINK}/${user.resetSecret}`
     readHTMLFile('./email_content/recovery.html', function (err, html) {
         var template = handlebars.compile(html);
@@ -81,7 +92,7 @@ const sendWelcomeEmail = async (receiverAdress, user) => {
 }
 
 const sendRecoveryMail = async (receiverAdress, user) => {
-    const transporter = createTransport()
+    const transporter = await createTransport()
     const link = `${process.env.PASSWORD_RESET_LINK}/${user.resetSecret}`
     readHTMLFile('./email_content/recovery.html', function (err, html) {
         var template = handlebars.compile(html);
@@ -214,7 +225,7 @@ const prepareOrderHelpers = async (order) => {
 
 const sendOrderCompletedMail = async (receiverAdress, order) => {
     const [ord, attachments] = await prepareOrderHelpers(order)
-    const transporter = createTransport()
+    const transporter = await createTransport()
     readHTMLFile('./email_content/order.html', function (err, html) {
         var template = handlebars.compile(html);
         var replacements = {
@@ -245,7 +256,7 @@ const sendOrderCompletedMail = async (receiverAdress, order) => {
 
 const sendOrderSentMail = async (receiverAdress,order) => {
     const [ord, attachments] = await prepareOrderHelpers(order)
-    const transporter = createTransport()
+    const transporter = await createTransport()
     readHTMLFile('./email_content/order_sent.html', function (err, html) {
         var template = handlebars.compile(html);
         console.log(ord.value)
@@ -277,7 +288,7 @@ const sendOrderSentMail = async (receiverAdress,order) => {
 
 const sendOrderProcessedMail = async (receiverAdress, order) => {
     const [ord, attachments] = await prepareOrderHelpers(order)
-    const transporter = createTransport()
+    const transporter = await createTransport()
     readHTMLFile('./email_content/order_processed.html', function (err, html) {
         var template = handlebars.compile(html);
         console.log(ord.value)
@@ -309,7 +320,7 @@ const sendOrderProcessedMail = async (receiverAdress, order) => {
 
 const sendOrderCancelledMail = async (receiverAdress, order) => {
     const [ord, attachments] = await prepareOrderHelpers(order)
-    const transporter = createTransport()
+    const transporter = await createTransport()
     readHTMLFile('./email_content/order_refund.html', function (err, html) {
         var template = handlebars.compile(html);
         console.log(ord.value)
@@ -342,7 +353,7 @@ const sendOrderCancelledMail = async (receiverAdress, order) => {
 const sendNewOrderMail = async (order, user) => {
     const receiverAdress = process.env.ORDERS_RECIEVER_MAIL
     const [ord, attachments] = await prepareOrderHelpers(order)
-    const transporter = createTransport()
+    const transporter = await createTransport()
     readHTMLFile('./email_content/order_summary.html', function (err, html) {
         var template = handlebars.compile(html);
         console.log(ord.value)
@@ -374,7 +385,7 @@ const sendNewOrderMail = async (order, user) => {
 
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-                console.log(error)
+                console.log('Email not sent:' + error)
             } else {
                 console.log('Email sent: ' + info.response);
             }
@@ -384,7 +395,7 @@ const sendNewOrderMail = async (order, user) => {
 
 const sendNewMessage = async(message) => {
     const receiverAdress = process.env.ORDERS_RECIEVER_MAIL
-    const transporter = createTransport()
+    const transporter = await createTransport()
     readHTMLFile('./email_content/message.html', function (err, html) {
         var template = handlebars.compile(html)
         var replacements = {
@@ -424,7 +435,7 @@ const sendNewMessage = async(message) => {
 
 const sendNewUserSummaryMail = async (user) => {
     const receiverAdress = process.env.ORDERS_RECIEVER_MAIL
-    const transporter = createTransport()
+    const transporter = await createTransport()
     readHTMLFile('./email_content/new_user_summary.html', function (err, html) {
         var template = handlebars.compile(html)
         var replacements = {
@@ -467,7 +478,7 @@ const sendNewUserSummaryMail = async (user) => {
 }
 
 const sendCodeVerificationMail = async (receiverAdress, user) => {
-    const transporter = createTransport()
+    const transporter = await createTransport()
     readHTMLFile('./email_content/codeVerification.html', function (err, html) {
         var template = handlebars.compile(html)
         var replacements = {
