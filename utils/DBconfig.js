@@ -11,7 +11,8 @@ const createTransportProduct = async () => {
             name:'Doprava',
             price:700,
             imagePath:'doprava.png',
-            eshop:false
+            eshop:false,
+            isDoTerraProduct:false
         })
         await transport.save()
         console.log('Created transport product.')
@@ -25,7 +26,8 @@ const createPODProduct = async () => {
             name:'Dobierka',
             price:200,
             imagePath:'dobierka.png',
-            eshop:false
+            eshop:false,
+            isDoTerraProduct:false
         })
         await pod.save()
     console.log('Created pod product.')
