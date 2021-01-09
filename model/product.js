@@ -65,7 +65,11 @@ const productSchema = new mongoose.Schema({
     },
     tips:[{
         type:String
-    }]
+    }],
+    isDoTerraProduct:{
+        type:Boolean,
+        required:true
+    }
 }
 
 , { minimize: false })

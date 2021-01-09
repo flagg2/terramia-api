@@ -21,7 +21,7 @@ const calculateOrderAmount = async (order, ignoreCoupon = false, ignoreDiscount 
         
         for (const [index, product] of products.entries()) {
             if (index % 2 == 1) continue
-            const actPrice = order.applyDiscount && product.points!=0 && !ignoreDiscount?
+            const actPrice = order.applyDiscount && product.points!=0 && product.isDoTerraProduct && !ignoreDiscount?
             (product.price*products[index+1]*0.75).toFixed(0) : (product.price*products[index+1])
             totalPrice += parseInt(actPrice)
         }

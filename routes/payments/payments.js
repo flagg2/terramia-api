@@ -57,6 +57,10 @@ router.post('/skip', async (req,res) => {
 			message: 'This order is not pending',
 			error: 'not-pending'
 		})
+		if (order.applyDiscount) return res.status(400).send({
+			message:'Only card payment is valid for discounted orders',
+			error:'invalid-payment-method'
+		})
 		const pod = await Product.findOne({name:'Dobierka'})
             if (!(order.products).includes(pod.id) && (order.value)!=0 && order.shouldDeliver){
 				order.products.push(pod._id)

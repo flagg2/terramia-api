@@ -46,7 +46,8 @@ const newProductValidation = (req, res) => {
         topProduct: Joi.boolean(),
         problemType: Joi.array().items(Joi.number()),
         points:Joi.number().min(0),
-        tips: Joi.array().items(Joi.string())
+        tips: Joi.array().items(Joi.string()),
+        isDoTerraProduct: Joi.boolean().required()
     })
     return validate(req, res, Joischema)
 }
@@ -64,7 +65,8 @@ const patchProductValidation = (req, res) => {
         topProduct: Joi.boolean(),
         problemType: Joi.array().items(Joi.number()),
         points:Joi.number().min(0),
-        tips: Joi.array().items(Joi.string())
+        tips: Joi.array().items(Joi.string()),
+        isDoTerraProduct: Joi.boolean()
     })
     return validate(req, res, Joischema)
 }
@@ -148,7 +150,11 @@ const tempUserValidation = (req, res) => {
             name:Joi.string(),
             ico:Joi.string(),
             dic:Joi.string(),
-            icdph:Joi.string()
+            icdph:Joi.string(),
+            address: Joi.string().max(50),
+            psc: Joi.string().min(3).max(10),
+            city: Joi.string().max(50),
+            country: Joi.string().max(50),
         })
     })
     return validate(req, res, Joischema)
@@ -193,7 +199,10 @@ const orderValidation = (req, res) => {
         }),
         coupon: Joi.string().max(20),
         applyDiscount: Joi.boolean(),
-        shouldDeliver: Joi.boolean(),
+        shouldDeliver: Joi.boolean().when('appyDiscount',{
+            is:true,
+            then:Joi.valid(true)
+        }),
         buyingAsCompany : Joi.boolean(),
         birthDate: Joi.string()
     })
@@ -329,7 +338,11 @@ const patchProfileValidation = (req, res) => {
             name:Joi.string(),
             ico:Joi.string(),
             dic:Joi.string(),
-            icdph:Joi.string()
+            icdph:Joi.string(),
+            address: Joi.string().max(50),
+            psc: Joi.string().min(3).max(10),
+            city: Joi.string().max(50),
+            country: Joi.string().max(50),
         })
 
     })
