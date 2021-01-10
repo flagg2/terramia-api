@@ -32,7 +32,7 @@ module.exports = (router) => {
         if (getFilteredProductsValidation(req,res)) return
         try {
             let products;
-            if (req.body.filters.problemType){
+            if (req.body.filters && req.body.filters.problemType){
                 products = await Product.find({...req.body.filters,problemType:{$elemMatch :{ $in : [req.body.filters.problemType]}}}).limit(req.body.limit)
             }
             else{

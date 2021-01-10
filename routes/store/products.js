@@ -38,10 +38,15 @@ module.exports = (router) => {
     router.post('/products', async (req, res) => {
         if (getFilteredProductsValidation(req, res)) return
         try {
+            const {abc:abc,...sortBy} = req.body.sortBy
             const products = await Product.find({
                 ...req.body.filters,
                 name: {$not: {$in: ['Doprava','Dobierka','Doprava2']}},
-            }).limit(req.body.limit).sort(req.body.sortBy)
+            }).limit(req.body.limit).sort(sortBy)
+            if (abc){
+                products.sort((a,b)=>a.name.localeCompare(b.name))
+                if (abc==-1) products.reverse()
+            }
             if (req.body.query) {
                 const searchResults = smartSearch(req.body.query, products)
                 return res.send({
@@ -55,7 +60,7 @@ module.exports = (router) => {
                 count: products.length,
                 products: products
             })
-        } catch {
+        } catch(err) {
             serverError(res, err)
         }
     })
