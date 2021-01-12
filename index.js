@@ -1,3 +1,4 @@
+require('console-stamp')(console, '[HH:MM:ss.l]');
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
