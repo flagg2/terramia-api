@@ -2,6 +2,9 @@ require('console-stamp')(console, '[HH:MM:ss.l]');
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const https = require('https');
+const fs = require('fs');
+const port = 8443;
 
 require('dotenv/config')
 require('./cron_jobs/cron_jobs')
@@ -21,6 +24,12 @@ const blogRoute = require('./routes/blog/blog')
 
 
 //Connect to DB
+const key = fs.readFileSync('/etc/webmin/webmin/coronashop.store.key');
+const cert = fs.readFileSync('/etc/webmin/webmin/coronashop.store.cert');
+const options = {
+  key: key,
+  cert: cert
+};
 
 require('./utils/DBconfig')
 
@@ -65,4 +74,6 @@ app.use('/api/payments', paymentRoute)
 app.use('/api/contact',contactRoute)
 app.use('*',notFoundRoute)
 
-app.listen(8081, ()=>{console.log('Server up and running.')})
+const server = https.createServer(options, app);
+
+server.listen(port, ()=>{console.log('Server up and running.')})

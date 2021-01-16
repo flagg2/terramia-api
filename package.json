@@ -20,6 +20,7 @@
     "fs": "0.0.1-security",
     "fuse.js": "^6.4.1",
     "handlebars": "^4.7.6",
+    "https": "^1.0.0",
     "joi-phone-number": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb-backup-4x": "^3.2.1",
