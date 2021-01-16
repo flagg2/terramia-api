@@ -65,4 +65,4 @@ app.use('/api/payments', paymentRoute)
 app.use('/api/contact',contactRoute)
 app.use('*',notFoundRoute)
 
-app.listen(8080, ()=>{console.log('Server up and running.')})
+app.listen(8081, ()=>{console.log('Server up and running.')})
