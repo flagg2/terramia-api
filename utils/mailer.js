@@ -137,7 +137,7 @@ const sendRecoveryMail = async (receiverAdress, user) => {
     })
 }
 const prettyPrint = (price) => {
-    if (parseInt(price) == 0){
+    if (parseFloat(price) == 0){
         return 'Zadarmo'
     }
     return `${price}€`
