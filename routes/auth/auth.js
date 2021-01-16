@@ -81,7 +81,7 @@ router.post('/login', async (req, res) => {
             error: 'email'
         })
     }
-    if(!user.address) {
+    if(!user.address && user.needAddress == true) {
         return res.status(400).send({
             message: 'User has not yet provided their billing details',
             error:'no-billing'

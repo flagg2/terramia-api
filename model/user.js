@@ -129,6 +129,10 @@ const userSchema = new mongoose.Schema({
     tempUser:{
         type:Boolean,
         default:false
+    },
+    needAddress:{
+        type:Boolean,
+        default:true
     }
 }, { minimize: false })
 

@@ -26,7 +26,7 @@ const createTransport = async () => {
     try{
         transport =  nodemailer.createTransport({
             pool: true,
-            host: "smtp.websupport.sk",
+            host: "smtp.sendgrid.net",
             port: 465,
             secure: true, // use TLS
             auth: {
@@ -57,23 +57,28 @@ var readHTMLFile = (path, callback) => {
     })
 }
 
-const sendWelcomeEmail = async (receiverAdress, user) => {
+const sendWelcomeEmail = async (receiverAdress, pwd) => {
     const transporter = await createTransport()
-    const link = `${process.env.PASSWORD_RESET_LINK}/${user.resetSecret}`
-    readHTMLFile('./email_content/recovery.html', function (err, html) {
+    const link = `terramia.sk/auth/${receiverAdress}/${pwd}`
+    readHTMLFile('./email_content/welcome.html', function (err, html) {
         var template = handlebars.compile(html);
         var replacements = {
             logo: {
                 src: logoId,
                 cls: 'image'
             },
-            name: user.name.split(' ')[0],
+            link : {
+                    url: link,
+                    text: "Profil otvoríte kliknutím sem",
+                    cls: 'link'
+            },
+            pwd:pwd
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
-            subject: 'Zabudnuté heslo',
+            subject: 'Vitajte v klube TerraMia',
             html: htmlToSend,
             attachments: [{
                 filename: 'logo.png',
@@ -101,7 +106,7 @@ const sendRecoveryMail = async (receiverAdress, user) => {
             logo: {
                 src: logoId,
                 cls: 'image'
-            },
+            },from: 'TerraMia <klub@terramia.sk>',
             reset: {
                 url: link,
                 text: "RESETOVAŤ HESLO",
@@ -111,7 +116,7 @@ const sendRecoveryMail = async (receiverAdress, user) => {
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
             subject: 'Zabudnuté heslo',
             html: htmlToSend,
@@ -238,7 +243,7 @@ const sendOrderCompletedMail = async (receiverAdress, order) => {
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
             subject: 'Nová objednávka',
             html: htmlToSend,
@@ -270,7 +275,7 @@ const sendOrderSentMail = async (receiverAdress,order) => {
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
             subject: 'Objednávka odoslaná',
             html: htmlToSend,
@@ -302,7 +307,7 @@ const sendOrderProcessedMail = async (receiverAdress, order) => {
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
             subject: 'Objednávka spracovaná',
             html: htmlToSend,
@@ -334,7 +339,7 @@ const sendOrderCancelledMail = async (receiverAdress, order) => {
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
             subject: 'Zrušenie objednávky',
             html: htmlToSend,
@@ -377,7 +382,7 @@ const sendNewOrderMail = async (order, user) => {
         console.log(replacements)
         var htmlToSend = template(replacements);
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
             subject: 'Nová objednávka',
             html: htmlToSend,
@@ -414,7 +419,7 @@ const sendNewMessage = async(message) => {
         }
         var htmlToSend = template(replacements)
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
             subject: 'Nová správa',
             html: htmlToSend,
@@ -458,7 +463,7 @@ const sendNewUserSummaryMail = async (user) => {
         }
         var htmlToSend = template(replacements)
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
             subject: 'Žiadosť o vzorky',
             html: htmlToSend,
@@ -492,7 +497,7 @@ const sendCodeVerificationMail = async (receiverAdress, user) => {
         }
         var htmlToSend = template(replacements)
         const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
             subject: 'Overovací kód',
             html: htmlToSend,
@@ -521,5 +526,6 @@ module.exports = {
     sendNewOrderMail,
     sendCodeVerificationMail,
     sendOrderCancelledMail,
-    sendNewMessage
+    sendNewMessage,
+    sendWelcomeEmail
 }

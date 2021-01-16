@@ -24,6 +24,7 @@ const blogRoute = require('./routes/blog/blog')
 
 require('./utils/DBconfig')
 
+require('./utils/createAccounts')
 
 //Middlewares
 app.use(bodyParser.json({

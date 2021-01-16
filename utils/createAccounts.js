@@ -19,13 +19,17 @@ const sendEmail = async ()=>{
     console.error(err)
   }
   for (email of emailArray){
+    const userCheck = await User.findOne({email:email})
+    if (userCheck) continue
     console.log('Now sending to '+email)
-    const pwd = crypto.randomBytes(20).toString('hex')
+    const pwd = crypto.randomBytes(10).toString('hex')
     const salt = await bcrypt.genSalt(10)
     const hashPassword = await bcrypt.hash(pwd, salt)
     const user = new User({
       email:email,
-      password:hashPassword
+      password:hashPassword,
+      needAddress:false,
+      regStep:3
     })
     await user.save()
     await sendWelcomeEmail(email,pwd)
@@ -33,4 +37,4 @@ const sendEmail = async ()=>{
   }
 }
 
-sendEmail()
+//sendEmail()
