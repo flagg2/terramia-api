@@ -37,4 +37,4 @@ const sendEmail = async ()=>{
   }
 }
 
-//sendEmail()
+sendEmail()
