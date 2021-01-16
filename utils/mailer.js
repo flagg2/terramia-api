@@ -59,7 +59,7 @@ var readHTMLFile = (path, callback) => {
 
 const sendWelcomeEmail = async (receiverAdress, pwd) => {
     const transporter = await createTransport()
-    const link = `terramia.sk/auth/${receiverAdress}/${pwd}`
+    const link = `https://terramia.sk/auth/${receiverAdress}/${pwd}`
     readHTMLFile('./email_content/welcome.html', function (err, html) {
         var template = handlebars.compile(html);
         var replacements = {
