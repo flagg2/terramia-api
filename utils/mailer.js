@@ -23,8 +23,8 @@ handlebars.registerHelper("img", function (src, cls) {
 const createTransport = async () => {
     let transport
     console.log('Creating SMTP transport...')
-    try{
-        transport =  nodemailer.createTransport({
+    try {
+        transport = nodemailer.createTransport({
             pool: true,
             host: "smtp.sendgrid.net",
             port: 465,
@@ -35,12 +35,11 @@ const createTransport = async () => {
             }
         })
         console.log(`Transport: ${transport}`)
-    }
-    catch {
+    } catch {
         console.log('Creating transport failed, retrying in 20 seconds...')
-        setTimeout(async ()=>{
+        setTimeout(async () => {
             transport = await createTransport()
-        },20000)
+        }, 20000)
     }
     return transport
 }
@@ -67,12 +66,12 @@ const sendWelcomeEmail = async (receiverAdress, pwd) => {
                 src: logoId,
                 cls: 'image'
             },
-            link : {
-                    url: link,
-                    text: "Profil otvoríte kliknutím sem",
-                    cls: 'link'
+            link: {
+                url: link,
+                text: "Profil otvoríte kliknutím sem",
+                cls: 'link'
             },
-            pwd:pwd
+            pwd: pwd
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
@@ -106,7 +105,8 @@ const sendRecoveryMail = async (receiverAdress, user) => {
             logo: {
                 src: logoId,
                 cls: 'image'
-            },from: 'TerraMia <klub@terramia.sk>',
+            },
+            from: 'TerraMia <klub@terramia.sk>',
             reset: {
                 url: link,
                 text: "RESETOVAŤ HESLO",
@@ -137,7 +137,7 @@ const sendRecoveryMail = async (receiverAdress, user) => {
     })
 }
 const prettyPrint = (price) => {
-    if (parseFloat(price) == 0){
+    if (parseFloat(price) == 0) {
         return 'Zadarmo'
     }
     return `${price}€`
@@ -192,8 +192,8 @@ const prepareOrderHelpers = async (order) => {
             }
             imageHtml = `<td class="productImg"><img src="cid:placeholder"></td>`
         }
-        const actPrice = order.applyDiscount && product.points!=0 ?
-        (product.price/100*products[index+1]*0.75).toFixed(2) : (product.price/100*products[index+1]).toFixed(2)
+        const actPrice = order.applyDiscount && product.points != 0 ?
+            (product.price / 100 * products[index + 1] * 0.75).toFixed(2) : (product.price / 100 * products[index + 1]).toFixed(2)
         orderSum += parseInt(actPrice)
         string += `
                         <tr>
@@ -260,7 +260,7 @@ const sendOrderCompletedMail = async (receiverAdress, order) => {
     })
 }
 
-const sendOrderSentMail = async (receiverAdress,order) => {
+const sendOrderSentMail = async (receiverAdress, order) => {
     const [ord, attachments] = await prepareOrderHelpers(order)
     const transporter = await createTransport()
     readHTMLFile('./email_content/order_sent.html', function (err, html) {
@@ -369,14 +369,14 @@ const sendNewOrderMail = async (order, user) => {
                 cls: 'image'
             },
             orderSum: prettyPrint((parseInt(ord.value) / 100).toFixed(2)),
-            user:{
-                name:user.name,
-                email:user.email,
-                phone:user.phone,
-                address:user.address,
-                psc:user.psc,
-                country:user.country,
-                city:user.city
+            user: {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                address: user.address,
+                psc: user.psc,
+                country: user.country,
+                city: user.city
             }
         };
         console.log(replacements)
@@ -399,7 +399,7 @@ const sendNewOrderMail = async (order, user) => {
     })
 }
 
-const sendNewMessage = async(message) => {
+const sendNewMessage = async (message) => {
     const receiverAdress = process.env.ORDERS_RECIEVER_MAIL
     const transporter = await createTransport()
     readHTMLFile('./email_content/message.html', function (err, html) {
@@ -409,13 +409,13 @@ const sendNewMessage = async(message) => {
                 src: logoId,
                 cls: 'image'
             },
-            user:{
-                name:message.name,
-                email:message.email,
-                phone:message.phone,
-                message:message.message,
+            user: {
+                name: message.name,
+                email: message.email,
+                phone: message.phone,
+                message: message.message,
             }
-            
+
         }
         var htmlToSend = template(replacements)
         const mailOptions = {
@@ -449,17 +449,17 @@ const sendNewUserSummaryMail = async (user) => {
                 src: logoId,
                 cls: 'image'
             },
-            user:{
-                name:user.name,
-                email:user.email,
-                phone:user.phone,
-                address:user.address,
-                psc:user.psc,
-                country:user.country,
-                city:user.city,
-                sampleType:user.sampleType
+            user: {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                address: user.address,
+                psc: user.psc,
+                country: user.country,
+                city: user.city,
+                sampleType: user.sampleType
             }
-            
+
         }
         var htmlToSend = template(replacements)
         const mailOptions = {

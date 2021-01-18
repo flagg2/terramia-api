@@ -190,7 +190,7 @@ const finishOrder = async (order, res, paidOnline) => {
             await coupon.save()
         }
         sendOrderCompletedMail(user.email, order)
-        //sendNewOrderMail(order, user)
+        sendNewOrderMail(order, user)
         if (order.applyDiscount){
             user.registeredInDoTerra = true
         }
