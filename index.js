@@ -21,6 +21,7 @@ const storeRoute = require('./routes/store/store')
 const paymentRoute = require('./routes/payments/payments')
 const contactRoute = require('./routes/contact/contact')
 const blogRoute = require('./routes/blog/blog')
+const statusRoute = require('./routes/status/status')
 
 
 //Connect to DB
@@ -72,6 +73,7 @@ app.use('/api/admin', adminRoute)
 app.use('/api/store', storeRoute)
 app.use('/api/payments', paymentRoute)
 app.use('/api/contact',contactRoute)
+app.use('/api/status',statusRoute)
 app.use('*',notFoundRoute)
 
 const server = https.createServer(options, app);

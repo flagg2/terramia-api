@@ -1,5 +1,7 @@
+const { stat } = require('fs')
 const mongoose = require('mongoose')
 const Product = require('../model/product')
+const Status = require('../model/status')
 mongoose.connect(process.env.DB_CONNECTION, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -60,6 +62,18 @@ const createPODProduct = async () => {
         console.log('Created pod product.')
     }
 }
+
+const createStatus = async () => {
+    const isst = await Status.findOne({})
+    if (isst) return
+    const status = new Status({
+        underMaintenance:false
+    })
+    await status.save()
+    console.log('Created status record with default value of false')
+}
+
 createTransportProduct()
 createTransportProduct2()
 createPODProduct()
+createStatus()
