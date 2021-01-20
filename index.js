@@ -5,7 +5,6 @@ const bodyParser = require('body-parser')
 const https = require('https');
 const fs = require('fs');
 const port = 8443;
-require('./utils/createAccounts')
 
 require('dotenv/config')
 require('./cron_jobs/cron_jobs')
@@ -76,6 +75,8 @@ app.use('/api/payments', paymentRoute)
 app.use('/api/contact',contactRoute)
 app.use('/api/status',statusRoute)
 app.use('*',notFoundRoute)
+
+//require('./utils/createAccounts')
 
 const server = https.createServer(options, app);
 
