@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const https = require('https');
 const fs = require('fs');
 const port = 8443;
+require('./utils/createAccounts')
 
 require('dotenv/config')
 require('./cron_jobs/cron_jobs')
