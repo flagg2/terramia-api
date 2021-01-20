@@ -76,7 +76,7 @@ app.use('/api/contact',contactRoute)
 app.use('/api/status',statusRoute)
 app.use('*',notFoundRoute)
 
-require('./utils/createAccounts')
+//require('./utils/createAccounts')
 
 const server = https.createServer(options, app);
 

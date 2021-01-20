@@ -29,7 +29,8 @@ const sendEmail = async ()=>{
       email:email,
       password:hashPassword,
       needAddress:false,
-      regStep:3
+      regStep:3,
+      registeredInDoTerra:true
     })
     await user.save()
     await sendWelcomeEmail(email,pwd)
