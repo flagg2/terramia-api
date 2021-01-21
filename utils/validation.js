@@ -47,7 +47,8 @@ const newProductValidation = (req, res) => {
         problemType: Joi.array().items(Joi.number()),
         points:Joi.number().min(0),
         tips: Joi.array().items(Joi.string()),
-        isDoTerraProduct: Joi.boolean().required()
+        isDoTerraProduct: Joi.boolean().required(),
+        link:Joi.string()
     })
     return validate(req, res, Joischema)
 }
@@ -66,7 +67,8 @@ const patchProductValidation = (req, res) => {
         problemType: Joi.array().items(Joi.number()),
         points:Joi.number().min(0),
         tips: Joi.array().items(Joi.string()),
-        isDoTerraProduct: Joi.boolean()
+        isDoTerraProduct: Joi.boolean(),
+        link:Joi.string()
     })
     return validate(req, res, Joischema)
 }
@@ -81,7 +83,8 @@ const getFilteredProductsValidation = (req, res) => {
             available: Joi.boolean(),
             topProduct: Joi.boolean(),
             problemType: Joi.number(),
-            eshop: Joi.boolean()
+            eshop: Joi.boolean(),
+            link:Joi.string()
         }),
         sortBy: Joi.object({
             price: Joi.number().valid(-1, 1),

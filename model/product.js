@@ -69,6 +69,9 @@ const productSchema = new mongoose.Schema({
     isDoTerraProduct:{
         type:Boolean,
         required:true
+    },
+    link:{
+        type:String
     }
 }
 
