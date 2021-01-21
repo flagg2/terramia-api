@@ -34,7 +34,7 @@ const options = {
 
 require('./utils/DBconfig')
 
-require('./utils/createAccounts')
+//require('./utils/createAccounts')
 
 //Middlewares
 app.use(bodyParser.json({
