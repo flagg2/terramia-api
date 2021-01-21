@@ -38,11 +38,13 @@ module.exports = (router) => {
     router.post('/products', async (req, res) => {
         if (getFilteredProductsValidation(req, res)) return
         try {
-            try{
-                var {abc:abc,...sortBy} = req.body.sortBy
-            }
-            catch{
-                var {...sortBy} = req.body.sortBy
+            if (req.body.sortBy){
+                try{
+                    var {abc:abc,...sortBy} = req.body.sortBy
+                }
+                catch{
+                    var {...sortBy} = req.body.sortBy
+                }
             }
             const products = await Product.find({
                 ...req.body.filters,
