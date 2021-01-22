@@ -122,7 +122,7 @@ router.post('/forgot', async (req, res) => {
             email: req.body.email,
             tempUser:false
         })
-        if (!user) notFound(res, 'Email')
+        if (!user) return notFound(res, 'Email')
         user.resetSecret = crypto.randomBytes(20).toString('hex')
         const savedUser = await user.save()
         console.log(sendRecoveryMail(req.body.email, savedUser))
