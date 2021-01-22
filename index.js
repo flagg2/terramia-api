@@ -40,7 +40,8 @@ require('./utils/DBconfig')
 app.use(bodyParser.json({
     verify: (req, res, buf) => {
       req.rawBody = buf
-    }
+    },
+    limit:'100MB'
   }))
 
 //is json valid?
