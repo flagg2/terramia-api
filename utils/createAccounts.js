@@ -6,7 +6,7 @@ const crypto = require('crypto')
 const emailArray = []
 const sendEmail = async ()=>{
   try {
-    const data = fs.readFileSync('./utils/sample2.csv', 'utf8')
+    const data = fs.readFileSync('./utils/mailchimp.csv', 'utf8')
     console.log(data)
     const lines = data.split('\n')
     for (line of lines){
