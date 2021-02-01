@@ -23,7 +23,7 @@ module.exports = (router) => {
     router.post('/register/pre', async (req, res) => {
         if (preRegisterValidation(req, res)) return
         const usero = await User.findOne({
-            email: req.body.email,
+            email: {$regex:'﻿?'+req.body.email},
             tempUser:false
         })
         console.log(usero)
@@ -53,7 +53,7 @@ module.exports = (router) => {
         if (billingRegisterValidation(req, res)) return
         try {
             let user = await User.findOne({
-                email: req.body.email,
+                email: {$regex:'﻿?'+req.body.email},
                 tempUser:false
             })
             if (!user) return notFound(res, 'User')
@@ -99,7 +99,7 @@ module.exports = (router) => {
         if (sendCodeRegisterValidation(req, res)) return
         try {
             const user = await User.findOne({
-                email: req.body.email,
+                email: {$regex:'﻿?'+req.body.email},
                 tempUser:false
             })
             if (!user) return notFound(res, 'User')
@@ -130,7 +130,7 @@ module.exports = (router) => {
         if (finishRegisterValidation(req, res)) return
         try {
             const user = await User.findOne({
-                email: req.body.email,
+                email: {$regex:'﻿?'+req.body.email},
                 tempUser:false
             })
             if (!user) return notFound(res, 'User')
@@ -155,7 +155,7 @@ module.exports = (router) => {
                 regStep:3
             })
             const savedUser = await User.findOne({
-                email: req.body.email,
+                email: {$regex:'﻿?'+req.body.email},
                 tempUser:false
             })
             res.send({

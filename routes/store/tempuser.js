@@ -13,7 +13,7 @@ module.exports = (router) => {
         if (tempUserValidation(req, res)) return
         try {
             await User.findOneAndDelete({
-                email:req.body.email,
+                email:{$regex:'﻿?'+req.body.email},
                 tempUser:true
             })
             const user = new User({

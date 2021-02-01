@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
     if (loginValidation(req, res)) return
     //check if email exists
     const user = await User.findOne({
-        email: req.body.email,
+        email: {$regex:'﻿?'+req.body.email},
         tempUser:false
     })
     if (!user) {
@@ -119,7 +119,7 @@ router.all('/forgot', methods(['POST']))
 router.post('/forgot', async (req, res) => {
     try {
         const user = await User.findOne({
-            email: req.body.email,
+            email: {$regex:'﻿?'+req.body.email},
             tempUser:false
         })
         if (!user) return notFound(res, 'Email')

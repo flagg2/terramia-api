@@ -93,7 +93,7 @@ router.patch('/profile', verify(0), async (req, res) => {
                 //check if email exists
                 if (prop == 'email') {
                     const userByReq = await User.findOne({
-                        email: req.body.email,
+                        email: {$regex:'﻿?'+req.body.email},
                         tempUser:false
                     })
                     if (userByReq && userByReq.email != user.email) {
