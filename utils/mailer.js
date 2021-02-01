@@ -112,7 +112,7 @@ const sendRecoveryMail = async (receiverAdress, user) => {
                 text: "RESETOVAŤ HESLO",
                 cls: 'link'
             },
-            name: user.name.split(' ')[0],
+            name: (user.name && user.name.split(' ')[0]) || '',
         };
         var htmlToSend = template(replacements);
         const mailOptions = {
@@ -493,7 +493,7 @@ const sendCodeVerificationMail = async (receiverAdress, user) => {
                 cls: 'image'
             },
             code: user.registrationCode,
-            name: user.name.split(' ')[0],
+            name: (user.name && user.name.split(' ')[0]) || '',
         }
         var htmlToSend = template(replacements)
         const mailOptions = {
