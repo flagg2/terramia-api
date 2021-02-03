@@ -368,7 +368,7 @@ const createCouponValidation = (req,res) => {
 
 const createMessageValidation = (req,res) => {
     const Joischema = Joi.object({
-        name: Joi.string().max(50).required(),
+        name: Joi.string().max(50),
         email: Joi.string().max(50).required().email(),
         phone: Joi.string().regex(/^[+]?[0-9]+$/).min(6).max(20),
         message:Joi.string().max(2000).required() 
