@@ -440,7 +440,7 @@ const sendNewMessage = async (message) => {
 }
 
 const sendHelpMessage = async (message) => {
-    const receiverAdress = 'problemy@terramia.sk'
+    const receiverAdress = 'pomoc@terramia.sk'
     const transporter = await createTransport()
     readHTMLFile('./email_content/message.html', function (err, html) {
         var template = handlebars.compile(html)
