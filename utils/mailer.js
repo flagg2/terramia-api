@@ -439,6 +439,46 @@ const sendNewMessage = async (message) => {
     });
 }
 
+const sendHelpMessage = async (message) => {
+    const receiverAdress = 'problemy@terramia.sk'
+    const transporter = await createTransport()
+    readHTMLFile('./email_content/message.html', function (err, html) {
+        var template = handlebars.compile(html)
+        var replacements = {
+            logo: {
+                src: logoId,
+                cls: 'image'
+            },
+            user: {
+                name: message.name,
+                email: message.email,
+                phone: message.phone,
+                message: message.message,
+            }
+
+        }
+        var htmlToSend = template(replacements)
+        const mailOptions = {
+            from: 'TerraMia <klub@terramia.sk>',
+            to: receiverAdress,
+            subject: 'Nový problém',
+            html: htmlToSend,
+            attachments: [{
+                filename: 'logo.png',
+                path: './email_content/logo.png',
+                cid: `${logoId}`
+            }]
+        }
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error)
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+    });
+}
+
 const sendNewUserSummaryMail = async (user) => {
     const receiverAdress = process.env.ORDERS_RECIEVER_MAIL
     const transporter = await createTransport()
@@ -527,5 +567,6 @@ module.exports = {
     sendCodeVerificationMail,
     sendOrderCancelledMail,
     sendNewMessage,
-    sendWelcomeEmail
+    sendWelcomeEmail,
+    sendHelpMessage
 }
