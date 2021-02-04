@@ -1,6 +1,7 @@
 const methods = require('../../middlewares/methods')
 const verify = require('../../middlewares/verifyToken')
 const Order = require('../../model/order')
+const ExcelGenerator = require('../../utils/excelGenerator')
 const User = require('../../model/user')
 const {notFound} = require('../../utils/errors')
 const {serverError} = require('../../utils/errors')
@@ -41,6 +42,23 @@ router.post('/orders',verify(1), async (req,res) => {
        serverError(res,err)
     }
 })
+
+router.all("/orders/createExcel",methods(['POST']))
+router.post("/orders/createExcel",verify(1),async (req,res) =>
+{
+    try {
+        const eg = new ExcelGenerator()
+        const name = await eg.generateExcel()
+        return res.send({
+            message:'Excel file created successfully',
+            path : `${name}.xlsx`
+        })
+    }
+    catch(err) {
+        serverError(res,err)
+    }
+})
+
 
 router.all('/orders/:id',methods(['GET']))
 router.get('/orders/:id',verify(1),async (req,res) => {
