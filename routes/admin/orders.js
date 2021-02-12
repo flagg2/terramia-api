@@ -79,7 +79,9 @@ router.all('/orders/:id/fulfill',methods(['POST']))
 router.post('/orders/:id/fulfill',verify(1),async (req,res) => {
     if (idValidation(req,res)) return
     try{
+        console.log(req.params.id)
         const order = await Order.findById(req.params.id)
+        console.log(order)
         if (!order) return notFound(res,'Order')
         if (order.status == 'sent') return res.status(400).send({message:'The order has already been sent',error:'sent'})
         if (order.status == 'pending') return res.status(400).send({message:'Cannot fulfill an incomplete order',error:'incomplete'})
