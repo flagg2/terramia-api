@@ -204,8 +204,10 @@ const finishOrder = async (order, res, paidOnline) => {
 
 const refundOrder = async (order) => {
     if (order.value > 0 && order.clientSecret){
-    const refund = await stripe.refunds.create({
-        payment_intent: `pi_${order.clientSecret.split('_')[1]}`,
+        const part = order.clientSecret.split('_')[1]
+        if (part === undefined) return
+        const refund = await stripe.refunds.create({
+        payment_intent: `pi_${part}`,
       });
     return refund
     }
