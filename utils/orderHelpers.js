@@ -203,7 +203,7 @@ const finishOrder = async (order, res, paidOnline) => {
 }
 
 const refundOrder = async (order) => {
-    if (order.value > 0){
+    if (order.value > 0 && order.clientSecret){
     const refund = await stripe.refunds.create({
         payment_intent: `pi_${order.clientSecret.split('_')[1]}`,
       });
