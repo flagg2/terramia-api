@@ -226,6 +226,21 @@ const prepareOrderHelpers = async (order) => {
             return new handlebars.SafeString(discString)
         } else return
     })
+    handlebars.registerHelper('processedMsg', function(){
+        let msg
+        if (!ord.shouldDeliver){
+            msg = `<div class='thanks'>Vaša objednávka bola spracovaná.
+             Pre dohodnutie termínu osobného odberu tovaru,
+              ktorý ste si objednali na našej stránke, nás prosím
+               kontaktujte na <a href='mailto:info@terramia.sk'>info@terramia.sk</a>
+                alebo na <a href='tel:0903856851'>0903856851</a>. </div>`
+        }
+        else{
+            msg = `<div class='thanks'>Vaša objednávka bola spracovaná, 
+            a čoskoro bude odoslaná. Po jej odoslaní vás budeme informovať.</div>`
+        }
+        return new handlebars.SafeString(msg)
+    })
     return [ord, attachments]
 }
 
@@ -303,7 +318,7 @@ const sendOrderProcessedMail = async (receiverAdress, order) => {
                 src: logoId,
                 cls: 'image'
             },
-            orderSum: prettyPrint((parseInt(ord.value) / 100).toFixed(2))
+            orderSum: prettyPrint((parseInt(ord.value) / 100).toFixed(2)),
         };
         var htmlToSend = template(replacements);
         const mailOptions = {

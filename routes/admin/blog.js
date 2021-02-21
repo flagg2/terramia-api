@@ -28,7 +28,7 @@ module.exports = (router) => {
     router.post("/blogs", verify(1), async (req, res) => {
         if (createBlogValidation(req, res)) return
         try {
-            //req.body.html = sanitizeHtml(req.body.html,sanitizeOptions)
+            req.body.html = sanitizeHtml(req.body.html,sanitizeOptions)
             const blog = new Blog({
                 ...req.body
             })
