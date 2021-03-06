@@ -10,6 +10,7 @@ const sendEmail = async ()=>{
     const lines = data.split('\n')
     for (line of lines){
       emailArray.push(line)
+      console.log(line)
     }
   } catch (err) {
     console.error(err)
