@@ -9,10 +9,7 @@ const sendEmail = async ()=>{
     const data = fs.readFileSync('./utils/mailchimp.csv', 'utf8')
     const lines = data.split('\n')
     for (line of lines){
-      const [v1,v2,v3] = line.split(',')
-      if (v1) emailArray.push(v1)
-      if (v2) emailArray.push(v2)
-      if (v3) emailArray.push(v3)
+      emailArray.push(line)
     }
   } catch (err) {
     console.error(err)
