@@ -5,9 +5,9 @@ const Status = require('../model/status')
 mongoose.connect(process.env.DB_CONNECTION, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    //"auth": { "authSource": "admin" },
-    //"user": "advision",
-    //"pass": process.env.DB_PASSWORD,
+    "auth": { "authSource": "admin" },
+    "user": "advision",
+    "pass": process.env.DB_PASSWORD,
 }, () => {
     console.log('Connected to db!')
 })
