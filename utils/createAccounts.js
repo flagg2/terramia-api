@@ -7,6 +7,7 @@ const emailArray = []
 const sendEmail = async ()=>{
   try {
     const data = fs.readFileSync('./utils/mailchimp.csv', 'utf8')
+    if (!data) return
     const lines = data.split('\n')
     for (line of lines){
       emailArray.push(line)

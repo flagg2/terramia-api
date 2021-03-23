@@ -31,7 +31,7 @@ module.exports = (router) => {
                 })
             }
             const user = await User.findById(req.body.userId)
-            if (!user) notFound(res, 'User')
+            if (!user) return notFound(res, 'User')
 
             //are all billing details provided?
             const required = ['city', 'psc', 'address', 'country']

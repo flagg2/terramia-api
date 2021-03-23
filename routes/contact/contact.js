@@ -6,7 +6,7 @@ const {
     serverError
 } = require('../../utils/errors')
 const {
-    sendNewMessage, sendHelpMessage
+    sendNewMessage, sendHelpMessage, sendCompetitionMessage
 } = require('../../utils/mailer')
 
 router.all('/form', methods(['POST']))
@@ -18,6 +18,24 @@ router.post('/form', async (req, res) => {
         })
         const msg = await message.save()
         await sendNewMessage(msg)
+        res.send({
+            message: 'Message sent successfully'
+        })
+    } catch (err) {
+        serverError(res,err)
+    }
+})
+
+router.all("/competition", methods(['POST']))
+router.post("/competition",async (req,res) =>
+{
+    if (createMessageValidation(req,res)) return
+    try {
+        const message = new Message({
+            ...req.body
+        })
+        const msg = await message.save()
+        await sendCompetitionMessage(msg)
         res.send({
             message: 'Message sent successfully'
         })

@@ -4,7 +4,6 @@ const mongoose = require('mongoose')
 const messageSchema = new mongoose.Schema({
     name: {
         type:String,
-        required: true,
         max:50
     },
     email:{
