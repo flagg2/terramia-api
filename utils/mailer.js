@@ -516,7 +516,7 @@ const sendCompetitionMessage = async (message) => {
         const mailOptions = {
             from: 'TerraMia <klub@terramia.sk>',
             to: receiverAdress,
-            subject: 'Nový problém',
+            subject: 'Odpoved do sutaze',
             html: htmlToSend,
             attachments: [{
                 filename: 'logo.png',
