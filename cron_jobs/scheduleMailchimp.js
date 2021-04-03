@@ -108,7 +108,7 @@ const processOrdersForTheDay = async() => {
 const createAndSendCampaign = async (dayMoment, templateId) => {
     const segmentId = await getSegmentIdOfDay(dayMoment)
     if (!segmentId) return false
-    const campaignId = await createCampaign(segmentId)
+    const campaignId = await createCampaign(segmentId,templateId)
     if (!campaignId){
         return console.error('Invalid campaign id')
     }
@@ -141,9 +141,9 @@ const createCampaign = async (segmentId, templateId) => {
             }
         },
         settings:{
-            subject_line:'Testovaci Email',
-            title:'Testovacai kampan',
-            preview_text:'Zaujimava kampan',
+            subject_line:'Terramia Vzorky',
+            title:'Terramia Vzorky kampaň',
+            preview_text:'Nadväzujúca kampaň pre členov, ktorí si objednali vzorky',
             from_name:'Terramia',
             use_conversation:false,
             auto_footer:true,
@@ -190,3 +190,9 @@ const getTodaysEmailAddresses = async () => {
     }
 }
 job.start()
+const run = async () => {
+    const response = await client.templates.list();
+    console.log(response);
+  };
+  
+  run();
