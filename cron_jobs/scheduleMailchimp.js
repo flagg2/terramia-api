@@ -190,9 +190,3 @@ const getTodaysEmailAddresses = async () => {
     }
 }
 job.start()
-const run = async () => {
-    const response = await client.templates.list();
-    console.log(response);
-  };
-  
-  run();
