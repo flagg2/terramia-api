@@ -31,7 +31,15 @@ router.get('/orders',verify(1), async (req,res) => {
 router.post('/orders',verify(1), async (req,res) => {
     if (getFilteredOrdersValidation(req,res)) return
     try {
-        const orders = await Order.find(req.body.filters).limit(req.body.limit).sort(req.body.sortBy)
+        const valOverZero = req.body.valueOverZero
+        delete req.body.valueOverZero
+        let orders
+        if (valOverZero){
+            orders = await Order.find({...req.body.filters, value : {$gt:0}}).limit(req.body.limit).sort(req.body.sortBy)
+        }
+        else{
+            orders = await Order.find(req.body.filters).limit(req.body.limit).sort(req.body.sortBy)
+        }
         return res.send({
             message : 'Orders retrieved successfully',
             count: orders.length,

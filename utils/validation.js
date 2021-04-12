@@ -112,7 +112,8 @@ const getFilteredOrdersValidation = (req, res) => {
         filters: Joi.object({
             status: Joi.string().valid('ordered','fulfilled','pending','cancelled','sent'),
             orderedBy: Joi.string().max(20),
-            value:Joi.number().min(0)
+            value:Joi.number().min(0),
+            valueOverZero:Joi.boolean()
         }),
         sortBy: Joi.object({
             value: Joi.number().valid(-1, 1),
