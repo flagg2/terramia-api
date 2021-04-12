@@ -31,8 +31,8 @@ router.get('/orders',verify(1), async (req,res) => {
 router.post('/orders',verify(1), async (req,res) => {
     if (getFilteredOrdersValidation(req,res)) return
     try {
-        const valOverZero = req.body.valueOverZero
-        delete req.body.valueOverZero
+        const valOverZero = req.body.filters.valueOverZero
+        if (req.body.filters) delete req.body.filters.valueOverZero
         let orders
         if (valOverZero){
             orders = await Order.find({...req.body.filters, value : {$gt:0}}).limit(req.body.limit).sort(req.body.sortBy)
