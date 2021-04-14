@@ -29,7 +29,9 @@ const getStatsFromTimespan = async (timespan) => {
     }
 
     const sampled = await Order.aggregate([{
-        $match:{}
+        $match:{
+            value:0
+        }
     },{
         $lookup:{
             from: 'users',
@@ -48,14 +50,11 @@ const getStatsFromTimespan = async (timespan) => {
     },{
         $unwind: '$email'
     }])
-    console.log(sampled)
 
     const emailSet = new Set()
     for (const user of sampled){
         emailSet.add(user.email)
     }
-
-    console.log(start,end)
     
     const emails = await EmailBundle.find({
         'date': {
@@ -63,13 +62,22 @@ const getStatsFromTimespan = async (timespan) => {
             $gte: new Date(start)
         }
     })
+    
+    const samples = await Order.find({
+        value:0,
+        'date': {
+            $lte: new Date(end).setHours(23,59,59,999),
+            $gte: new Date(start)
+        }
+    })
+
     console.log(emails)
 
     const stats = {
         terramia: 0,
         terramia_net: 0,
         total:0,
-        samples:emailSet.size
+        samples:samples.length
     }
 
     for (const emailBundle of emails){
