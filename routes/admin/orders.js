@@ -2,15 +2,39 @@ const methods = require('../../middlewares/methods')
 const verify = require('../../middlewares/verifyToken')
 const Order = require('../../model/order')
 const ExcelGenerator = require('../../utils/excelGenerator')
+const EmailBundle = require('../../model/emailBundle')
 const User = require('../../model/user')
+const bcrypt = require('bcryptjs')
+const fs = require('fs')
+const crypto = require('crypto')
 const {notFound} = require('../../utils/errors')
 const {serverError} = require('../../utils/errors')
-const { sendOrderCancelledMail,sendOrderProcessedMail,sendOrderSentMail } = require('../../utils/mailer')
+const { sendOrderCancelledMail,sendOrderProcessedMail,sendOrderSentMail,sendWelcomeEmail } = require('../../utils/mailer')
 const {refundOrder} = require('../../utils/orderHelpers')
 const {
     idValidation,
     getFilteredOrdersValidation,
+    emailBundleValidation,
 } = require('../../utils/validation')
+
+const sendEmail = async (emailArray)=>{
+    for (email of emailArray){
+      const userCheck = await User.findOne({email:email})
+      if (userCheck) continue
+      const pwd = crypto.randomBytes(10).toString('hex')
+      const salt = await bcrypt.genSalt(10)
+      const hashPassword = await bcrypt.hash(pwd, salt)
+      const user = new User({
+        email:email,
+        password:hashPassword,
+        needAddress:false,
+        regStep:3,
+        registeredInDoTerra:true
+      })
+      await user.save()
+      await sendWelcomeEmail(email,pwd)
+    }
+  }
 
 module.exports = (router) =>{
 router.all('/orders',methods(['GET','POST']))
@@ -28,6 +52,26 @@ router.get('/orders',verify(1), async (req,res) => {
     }
 })
 
+router.all("/orders/emailBundle",methods(['POST']))
+router.post("/orders/emailBundle",verify(1),async (req,res) =>
+{
+    if (emailBundleValidation(req,res)) return
+    try {
+        const eb = new EmailBundle({
+            ...req.body
+        })
+        sendEmail(req.body.terramia)
+        sendEmail(req.body.terramia_net)
+        await eb.save()
+        return res.send({
+            message:'Emails added successfully',
+        })
+    }
+    catch(err) {
+        serverError(res,err)
+    }
+})
+
 router.post('/orders',verify(1), async (req,res) => {
     if (getFilteredOrdersValidation(req,res)) return
     try {
@@ -35,10 +79,10 @@ router.post('/orders',verify(1), async (req,res) => {
         if (req.body.filters) delete req.body.filters.valueOverZero
         let orders
         if (valOverZero){
-            orders = await Order.find({...req.body.filters, value : {$gt:0}}).limit(req.body.limit).sort(req.body.sortBy)
+            orders = await Order.find({...req.body.filters, value : {$gt:0}}).skip(req.body.skip).limit(req.body.limit).sort(req.body.sortBy)
         }
         else{
-            orders = await Order.find(req.body.filters).limit(req.body.limit).sort(req.body.sortBy)
+            orders = await Order.find(req.body.filters).skip(req.body.skip).limit(req.body.limit).sort(req.body.sortBy)
         }
         return res.send({
             message : 'Orders retrieved successfully',

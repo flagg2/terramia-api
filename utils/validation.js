@@ -107,6 +107,14 @@ const requestSamplesValidation = (req,res) => {
     return validate(req,res,Joischema)
 }
 
+const emailBundleValidation = (req,res) => {
+    const Joischema = Joi.object({
+        terramia:Joi.array().items(Joi.string()).required(),
+        terramia_net:Joi.array().items(Joi.string()).required()
+    })
+    return validate(req,res,Joischema)
+}
+
 const getFilteredOrdersValidation = (req, res) => {
     const Joischema = Joi.object({
         filters: Joi.object({
@@ -120,6 +128,7 @@ const getFilteredOrdersValidation = (req, res) => {
             date: Joi.number().valid(-1,1)
         }),
         limit: Joi.number().min(0),
+        skip: Joi.number().min(0)
     })
     return validate(req, res, Joischema)
 }
@@ -422,6 +431,13 @@ const getFilteredBlogsValidation = (req,res) => {
     return validate(req,res,Joischema)
 }
 
+const getStatsValidation = (req,res) => {
+    const Joischema = Joi.object({
+        timespan: Joi.string().valid('day','week','month','year').required()
+    })
+    return validate(req,res,Joischema)
+}
+
 module.exports = {
     createBlogValidation,
     patchBlogValidation,
@@ -446,5 +462,7 @@ module.exports = {
     createPaymentValidation,
     idValidation,
     createCouponValidation,
-    createMessageValidation
+    createMessageValidation,
+    emailBundleValidation,
+    getStatsValidation
 }
