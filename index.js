@@ -4,7 +4,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const https = require('https');
 const fs = require('fs');
-const port = 8443;
+const port = parseInt(process.env.PORT);
 
 require('dotenv/config')
 require('./cron_jobs/cron_jobs')
@@ -25,16 +25,19 @@ const statusRoute = require('./routes/status/status')
 
 
 //Connect to DB
-const key = fs.readFileSync('/etc/webmin/webmin/coronashop.store.key');
-const cert = fs.readFileSync('/etc/webmin/webmin/coronashop.store.cert');
-const options = {
+let key, cert, options
+if (process.env.IS_PRODUCTION == 'true'){
+key = fs.readFileSync('/etc/webmin/webmin/coronashop.store.key');
+cert = fs.readFileSync('/etc/webmin/webmin/coronashop.store.cert');
+options = {
   key: key,
   cert: cert
 };
+}
 
 require('./utils/DBconfig')
 
-require('./utils/createAccounts')
+app.disable('x-powered-by')
 
 //Middlewares
 app.use(bodyParser.json({
@@ -78,7 +81,10 @@ app.use('/api/status',statusRoute)
 app.use('*',notFoundRoute)
 
 //require('./utils/createAccounts')
-
-const server = https.createServer(options, app);
-
+if (process.env.IS_PRODUCTION == 'true'){
+ const server = https.createServer(options, app);
 server.listen(port, ()=>{console.log('Server up and running.')})
+}
+else{
+  app.listen(port, ()=>{console.log('Server up and running.')})
+}

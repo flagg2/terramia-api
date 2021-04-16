@@ -1,16 +1,29 @@
-const { stat } = require('fs')
+const {
+    stat
+} = require('fs')
 const mongoose = require('mongoose')
 const Product = require('../model/product')
 const Status = require('../model/status')
-mongoose.connect(process.env.DB_CONNECTION, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    "auth": { "authSource": "admin" },
-    "user": "advision",
-    "pass": process.env.DB_PASSWORD,
-}, () => {
-    console.log('Connected to db!')
-})
+if (process.env.IS_PRODUCTION == 'true') {
+    mongoose.connect(process.env.DB_CONNECTION, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        "auth": {
+            "authSource": "admin"
+        },
+        "user": "advision",
+        "pass": process.env.DB_PASSWORD,
+    }, () => {
+        console.log('Connected to db!')
+    })
+} else {
+    mongoose.connect(process.env.DB_CONNECTION, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    }, () => {
+        console.log('Connected to db!')
+    })
+}
 const createTransportProduct = async () => {
     const tran = await Product.findOne({
         name: 'Doprava'
@@ -67,7 +80,7 @@ const createStatus = async () => {
     const isst = await Status.findOne({})
     if (isst) return
     const status = new Status({
-        underMaintenance:false
+        underMaintenance: false
     })
     await status.save()
     console.log('Created status record with default value of false')
