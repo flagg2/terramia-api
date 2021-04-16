@@ -4,9 +4,9 @@ const app = express()
 const bodyParser = require('body-parser')
 const https = require('https');
 const fs = require('fs');
-const port = parseInt(process.env.PORT);
-
 require('dotenv/config')
+
+const port = parseInt(process.env.PORT);
 require('./cron_jobs/cron_jobs')
 
 //TODO zmenit cislo na realne v emailoch
