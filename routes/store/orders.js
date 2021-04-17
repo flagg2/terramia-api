@@ -10,13 +10,13 @@ const {
 const {
     validateCoupon,
     shouldShippingBeFree,
-    calculateOrderAmount
+    calculateOrderAmount,
+    calculateAddedCosts
 } = require('../../utils/orderHelpers')
 const {
     notFound,
     serverError
 } = require('../../utils/errors')
-
 
 module.exports = (router) => {
     router.all('/order', methods(['POST']))
@@ -80,24 +80,7 @@ module.exports = (router) => {
 
             //apply coupons
             if (await validateCoupon(order, res)) return
-            let freeShipping = true
-            if (!req.body.applyDiscount) {
-                const shipping = await Product.findOne({
-                    name: 'Doprava'
-                })
-                if (!await shouldShippingBeFree(order) && !(order.products).includes(shipping.id) && order.shouldDeliver !== false) {
-                    order.products.push(shipping._id)
-                    freeShipping = false
-                }
-            } else {
-                const shipping = await Product.findOne({
-                    name: 'Doprava2'
-                })
-                if (!!(order.products).includes(shipping.id)) {}
-                order.products.push(shipping._id)
-                freeShipping = false
-            }
-
+            await calculateAddedCosts(order,req.body.shouldDeliver,undefined,req.body.applyDiscount)
             const wwd = await calculateOrderAmount(order, undefined, true)
             const orderAmount = await calculateOrderAmount(order)
             order.value = orderAmount
@@ -109,7 +92,6 @@ module.exports = (router) => {
                 message: 'New order created successfully',
                 orderId: savedOrder._id,
                 value: order.value,
-                freeShipping: freeShipping,
                 valueWithoutDiscount: wwd
             })
         } catch (err) {

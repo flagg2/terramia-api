@@ -5,6 +5,74 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const {serverError} = require('./errors');
 const {sendOrderCompletedMail,sendNewOrderMail} = require('./mailer')
 
+const addIfNotIncluded = (order,item) => {
+    if (!(order.products.includes(item._id))){
+        order.products.push(item._id)
+        //order.value += item.price
+    }
+}
+
+const calculateAddedCosts = async (order, shouldDeliver, paymentType, applyDiscount) => {
+    if (await calculateOrderAmount(order) == 0) return
+    let points = 0
+    let areAllProductsDoterra = true
+    let areAllProductsTerramia = true
+    let valuePackage = false
+    for (const productId of order.products){
+        const product = await Product.findById(productId)
+        points += product.points
+        if (product.isDoTerraProduct){
+            areAllProductsTerramia = false
+        }
+        else{
+            areAllProductsDoterra = false
+        }
+        if (product.type == 4 && product.category == 1){
+            valuePackage = true
+        }
+    }
+    const pod = await Product.findOne({name:'Dobierka'})
+    const delivery = await Product.findOne({name:'Doprava'})
+    const doterraDelivery = await Product.findOne({name:'Doprava2'})
+    if (areAllProductsDoterra){
+        if (points < 100){
+            if (paymentType=='cash'){
+                addIfNotIncluded(order,pod)
+            }
+            if (order.shouldDeliver){
+                addIfNotIncluded(order,delivery)
+            }
+        }
+        else {
+            if (!valuePackage){
+                if (applyDiscount){
+                    addIfNotIncluded(order,doterraDelivery)
+                }
+                else{
+                    if (paymentType=='cash'){
+                        addIfNotIncluded(order,pod)
+                    }
+                }
+            }
+        }
+    }
+    else if (areAllProductsTerramia){
+        if (shouldDeliver){
+            addIfNotIncluded(order,delivery)
+        }
+    }
+    else{
+        if (shouldDeliver){
+            addIfNotIncluded(order,delivery)
+        }
+        if (paymentType=='cash'){
+            addIfNotIncluded(order,pod)
+        }
+    }
+    order.markModified('products')
+    await order.save()
+}
+
 const calculateOrderAmount = async (order, ignoreCoupon = false, ignoreDiscount = false) => {
     try {
         let totalPrice = 0;
@@ -218,5 +286,6 @@ module.exports = {
     calculateOrderAmount,
     finishOrder,
     refundOrder,
-    shouldShippingBeFree
+    shouldShippingBeFree,
+    calculateAddedCosts
 }

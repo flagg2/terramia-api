@@ -32,7 +32,7 @@ const createTransportProduct = async () => {
         const transport = new Product({
             type: 1,
             name: 'Doprava',
-            price: 700,
+            price: 490,
             imagePath: 'doprava.png',
             eshop: false,
             isDoTerraProduct: false
@@ -66,7 +66,7 @@ const createPODProduct = async () => {
         const pod = new Product({
             type: 1,
             name: 'Dobierka',
-            price: 200,
+            price: 100,
             imagePath: 'dobierka.png',
             eshop: false,
             isDoTerraProduct: false

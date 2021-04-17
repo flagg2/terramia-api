@@ -7,8 +7,7 @@ const {
 } = require('../../utils/validation')
 const User = require('../../model/user')
 const { serverError } = require('../../utils/errors')
-const { validateCoupon,calculateOrderAmount,finishOrder,shouldShippingBeFree } = require('../../utils/orderHelpers')
-const { not } = require('@hapi/joi')
+const { validateCoupon,finishOrder, calculateAddedCosts} = require('../../utils/orderHelpers')
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 router.all('/webhook', methods(['POST']))
@@ -61,11 +60,7 @@ router.post('/skip', async (req,res) => {
 			message:'Only card payment is valid for discounted orders',
 			error:'invalid-payment-method'
 		})
-		const pod = await Product.findOne({name:'Dobierka'})
-            if (!(order.products).includes(pod.id) && (order.value)!=0 && order.shouldDeliver){
-				order.products.push(pod._id)
-				order.value+=200
-           }
+		await calculateAddedCosts(order,req.body.shouldDeliver,'cash',req.body.applyDiscount)
 		if (await validateCoupon(order,res)) return
 		order.status = "ordered"
 		await order.save()
