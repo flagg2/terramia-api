@@ -110,7 +110,8 @@ const requestSamplesValidation = (req,res) => {
 const emailBundleValidation = (req,res) => {
     const Joischema = Joi.object({
         terramia:Joi.array().items(Joi.string()).required(),
-        terramia_net:Joi.array().items(Joi.string()).required()
+        terramia_net:Joi.array().items(Joi.string()).required(),
+        addToStats:Joi.boolean().required()
     })
     return validate(req,res,Joischema)
 }

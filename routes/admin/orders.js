@@ -58,7 +58,8 @@ router.post("/orders/emailBundle",verify(1),async (req,res) =>
     if (emailBundleValidation(req,res)) return
     try {
         const eb = new EmailBundle({
-            ...req.body
+            ...req.body,
+            includeInStats: req.body.addToStats || false
         })
         sendEmail(req.body.terramia)
         sendEmail(req.body.terramia_net)

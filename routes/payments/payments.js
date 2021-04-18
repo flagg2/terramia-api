@@ -7,7 +7,7 @@ const {
 } = require('../../utils/validation')
 const User = require('../../model/user')
 const { serverError } = require('../../utils/errors')
-const { validateCoupon,finishOrder, calculateAddedCosts} = require('../../utils/orderHelpers')
+const { validateCoupon,finishOrder, calculateAddedCosts,calculateOrderAmount} = require('../../utils/orderHelpers')
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 router.all('/webhook', methods(['POST']))
@@ -63,6 +63,8 @@ router.post('/skip', async (req,res) => {
 		await calculateAddedCosts(order,req.body.shouldDeliver,'cash',req.body.applyDiscount)
 		if (await validateCoupon(order,res)) return
 		order.status = "ordered"
+		const orderAmount = await calculateOrderAmount(order)
+        order.value = orderAmount
 		await order.save()
 		finishOrder(order,res,false)
 		res.send({

@@ -60,7 +60,8 @@ const getStatsFromTimespan = async (timespan) => {
         'date': {
             $lte: new Date(end).setHours(23,59,59,999),
             $gte: new Date(start)
-        }
+        },
+        includeInStats:true
     })
     
     const samples = await Order.find({

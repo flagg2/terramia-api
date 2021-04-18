@@ -11,6 +11,10 @@ const emailBundleSchema = new mongoose.Schema({
     },
     terramia_net:{
         type:[{type:String}]
+    },
+    includeInStats:{
+        type:Boolean,
+        default:false
     }
 })
 
