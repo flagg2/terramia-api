@@ -74,8 +74,9 @@ const getSegmentIdOfDay = async (dayMoment) => {
     const response = await client.lists.listSegments(listId);
     const segments = response.segments
     console.log(`response ${response}`)
-    console.log(`segments ${segments}`)
+    console.log(`segments ${JSON.stringify(segments)}`)
     const segment = segments.find(x => x.name === stamp)
+    console.log(`segment ${segment}`)
     if (!segment) return false
     return segment.id
     }
