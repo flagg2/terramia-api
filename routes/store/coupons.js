@@ -18,7 +18,7 @@ const {
 
 module.exports = (router) => {
     router.all("/coupons/:code",methods(['GET']))
-    router.get("/coupons/:code",verify(1),async (req,res) =>
+    router.get("/coupons/:code",async (req,res) =>
     {
         const coupon = await Coupon.findById(req.params.code)
         if (!coupon) return notFound(res,'Coupon')
