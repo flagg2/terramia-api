@@ -198,7 +198,7 @@ const getTodaysEmailAddresses = async () => {
 }
 job.start()
 
-const test = () => {
+const test = async () => {
     const response = await client.lists.listSegments(listId);
 console.log(response)
 }
