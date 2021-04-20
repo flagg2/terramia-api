@@ -93,6 +93,7 @@ const getFilteredProductsValidation = (req, res) => {
             name: Joi.number().valid(-1,1)
         }),
         limit: Joi.number().min(0),
+        skip: Joi.number().min(0),
         query: Joi.string(),
         mostSold: Joi.boolean()
 

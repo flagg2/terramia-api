@@ -41,7 +41,7 @@ module.exports = (router) => {
             const products = await Product.find({
                 ...req.body.filters,
                 name: {$not: {$in: ['Doprava','Dobierka','Doprava2']}},
-            }).limit(req.body.limit).sort(req.body.sortBy)
+            }).skip(req.body.skip).limit(req.body.limit).sort(req.body.sortBy)
             if (req.body.query) {
                 const searchResults = smartSearch(req.body.query, products)
                 return res.send({
