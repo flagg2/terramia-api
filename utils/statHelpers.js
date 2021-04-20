@@ -86,11 +86,11 @@ const getStatsFromTimespan = async (timespan) => {
         for (const email of emailBundle.terramia){
             if (emailSet.has(email)){
                 stats.terramia += 1
+                stats.terramia_net += 1
             }
         }
         for (const email of emailBundle.terramia_net){
             if (emailSet.has(email)){
-                stats.terramia += 1
                 stats.terramia_net += 1
                 stats.total += 1
             }
