@@ -82,7 +82,7 @@ const getStatsFromTimespan = async (timespan) => {
     }
 
     for (const emailBundle of emails){
-        stats.total += emailBundle.terramia.length + emailBundle.terramia_net.length
+        stats.total += emailBundle.terramia.length
         for (const email of emailBundle.terramia){
             if (emailSet.has(email)){
                 stats.terramia += 1
