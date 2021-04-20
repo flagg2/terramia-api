@@ -90,7 +90,7 @@ const getFilteredProductsValidation = (req, res) => {
             price: Joi.number().valid(-1, 1),
             soldAmount: Joi.number().valid(-1, 1),
             points: Joi.number().valid(-1, 1),
-            abc: Joi.number().valid(-1,1)
+            name: Joi.number().valid(-1,1)
         }),
         limit: Joi.number().min(0),
         query: Joi.string(),
