@@ -171,8 +171,8 @@ const getTodaysEmailAddresses = async () => {
     console.log(today,ago1)
     const orders = await Order.find({
         date: {
-            $gte: ago1.toDate(),
-            $lt: today.toDate(),
+            $lt: new Date(today.toDate()),
+            $gte: new Date(ago1.toDate()),
         },
         value:0
     })
