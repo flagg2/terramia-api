@@ -175,6 +175,7 @@ const getTodaysEmailAddresses = async () => {
         },
         value:0
     })
+    console.log(orders)
     const emailAddresses = []
         for (const order of orders) {
             const user = await User.findById(order.orderedBy)
@@ -182,6 +183,7 @@ const getTodaysEmailAddresses = async () => {
                 emailAddresses.push(user.email)
             }
         }
+    console.log(emailAddresses)
     return emailAddresses
     }
     catch (err) {
@@ -190,3 +192,4 @@ const getTodaysEmailAddresses = async () => {
     }
 }
 job.start()
+emailJob()

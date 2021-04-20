@@ -66,6 +66,9 @@ const orderSchema = new mongoose.Schema({
     buyingAsCompany:{
         type:Boolean,
         default:false
+    },
+    note:{
+        type:String
     }
 })
 

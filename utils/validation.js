@@ -219,7 +219,8 @@ const orderValidation = (req, res) => {
             then:Joi.valid(true)
         }),
         buyingAsCompany : Joi.boolean(),
-        birthDate: Joi.string()
+        birthDate: Joi.string(),
+        note: Joi.string()
     })
     try {
         if (!mongoose.Types.ObjectId.isValid(req.body.userId)) {
