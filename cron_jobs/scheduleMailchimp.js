@@ -167,12 +167,12 @@ const createCampaign = async (segmentId, templateId) => {
 const getTodaysEmailAddresses = async () => {
     try{
     const today = moment().add(1,'days')
-    const ago1 = moment().subtract(2,'days')
+    const ago1 = moment().subtract(3,'days')
     console.log(today,ago1)
     const orders = await Order.find({
         date: {
-            $lt: new Date(today.toDate()),
-            $gte: new Date(ago1.toDate()),
+            $lt: today.toDate(),
+            $gte: ago1.toDate(),
         },
         value:0
     })
