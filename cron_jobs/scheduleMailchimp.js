@@ -70,8 +70,11 @@ const addToAudience = async (emails) => {
 const getSegmentIdOfDay = async (dayMoment) => {
     try{
     const stamp = dayMoment.format('MM-DD-YYYY')
+    console.log(`stamp ${stamp}`)
     const response = await client.lists.listSegments(listId);
     const segments = response.segments
+    console.log(`response ${response}`)
+    console.log(`segments ${segments}`)
     const segment = segments.find(x => x.name === stamp)
     if (!segment) return false
     return segment.id
