@@ -70,13 +70,9 @@ const addToAudience = async (emails) => {
 const getSegmentIdOfDay = async (dayMoment) => {
     try{
     const stamp = dayMoment.format('MM-DD-YYYY')
-    console.log(`stamp ${stamp}`)
-    const response = await client.lists.listSegments(listId);
+    const response = await client.lists.listSegments(listId,{count:1000});
     const segments = response.segments
-    console.log(`response ${response}`)
-    console.log(`segments ${JSON.stringify(segments)}`)
     const segment = segments.find(x => x.name === stamp)
-    console.log(`segment ${segment}`)
     if (!segment) return false
     return segment.id
     }
@@ -171,7 +167,7 @@ const createCampaign = async (segmentId, templateId) => {
 const getTodaysEmailAddresses = async () => {
     try{
     const today = moment().add(1,'days')
-    const ago1 = moment().subtract(3,'days')
+    const ago1 = moment().subtract(1,'days')
     console.log(today,ago1)
     const orders = await Order.find({
         date: {
@@ -180,7 +176,6 @@ const getTodaysEmailAddresses = async () => {
         },
         value:0
     })
-    console.log(orders)
     const emailAddresses = []
         for (const order of orders) {
             const user = await User.findById(order.orderedBy)
@@ -198,7 +193,3 @@ const getTodaysEmailAddresses = async () => {
 }
 job.start()
 
-const test = async () => {
-    const response = await client.lists.listSegments(listId);
-console.log(response)
-}

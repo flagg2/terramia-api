@@ -92,6 +92,7 @@ const getStatsFromTimespan = async (timespan) => {
             if (emailSet.has(email)){
                 stats.terramia += 1
                 stats.terramia_net += 1
+                stats.total += 1
             }
         }
     }
