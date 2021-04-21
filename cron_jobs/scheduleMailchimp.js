@@ -7,6 +7,8 @@ const client = require("@mailchimp/mailchimp_marketing");
 const listId = 'a7e3f99d01'
 const templateId7 = 165643
 const templateId14 = 165615
+const templateId21 = 10000019
+const templateId28 = 10000202
 
 client.setConfig({
     apiKey: process.env.MAILCHIMP_API_KEY,
@@ -26,6 +28,16 @@ const emailJob = async () => {
     const ago14 = moment().subtract(14,'days')
     const suc2 = await createAndSendCampaign(ago14,templateId14)
     if (!suc2){
+        console.error('Error sending the 14 day email')
+    }
+    const ago21 = moment().subtract(21,'days')
+    const suc3 = await createAndSendCampaign(ago21,templateId21)
+    if (!suc3){
+        console.error('Error sending the 14 day email')
+    }
+    const ago28 = moment().subtract(28,'days')
+    const suc4 = await createAndSendCampaign(ago28,templateId28)
+    if (!suc4){
         console.error('Error sending the 14 day email')
     }
 }
@@ -192,4 +204,11 @@ const getTodaysEmailAddresses = async () => {
     }
 }
 job.start()
+
+const run = async () => {
+    const response = await client.templates.list();
+    console.log(response);
+  };
+  
+  run();
 
