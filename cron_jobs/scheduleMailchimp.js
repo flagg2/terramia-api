@@ -207,10 +207,3 @@ if (process.env.SEND_MAIL == 'true'){
     job.start()
 }
 
-const run = async () => {
-    const response = await client.templates.list();
-    console.log(response);
-  };
-  
-  run();
-
