@@ -21,22 +21,22 @@ const emailJob = async () => {
         console.error('Error creating new audience segment')
     }
     const ago7 = moment().subtract(7,'days')
-    const suc1 = await createAndSendCampaign(ago7,templateId7)
+    const suc1 = await createAndSendCampaign(ago7,templateId7,'Dostali ste vzorku doTERRA oleja na vyskúšanie?❤','Veríme, že Vás kvalitný olej potešil😊')
     if (!suc1){
         console.error('Error sending the 7 day email')
     }
     const ago14 = moment().subtract(14,'days')
-    const suc2 = await createAndSendCampaign(ago14,templateId14)
+    const suc2 = await createAndSendCampaign(ago14,templateId14,'Ako získať ďalšie esenciálne oleje?❤','Pozrite si naše video a vyhrajte🎉🎉🎉')
     if (!suc2){
         console.error('Error sending the 14 day email')
     }
     const ago21 = moment().subtract(21,'days')
-    const suc3 = await createAndSendCampaign(ago21,templateId21)
+    const suc3 = await createAndSendCampaign(ago21,templateId21,'Balík olejov a 7 darčekov 😍','Získajte more darčekov a zľavu 25%🍀')
     if (!suc3){
-        console.error('Error sending the 14 day email')
+        console.error('Error sending the 21 day email')
     }
     const ago28 = moment().subtract(28,'days')
-    const suc4 = await createAndSendCampaign(ago28,templateId28)
+    const suc4 = await createAndSendCampaign(ago28,templateId28,'Ktoré oleje sú pre Vás najvhodnejšie?😱','Vyplňte rýchly dotazník a vyberte si riešenie podľa seba!😍')
     if (!suc4){
         console.error('Error sending the 14 day email')
     }
@@ -117,10 +117,10 @@ const processOrdersForTheDay = async() => {
 }
 
 
-const createAndSendCampaign = async (dayMoment, templateId) => {
+const createAndSendCampaign = async (dayMoment, templateId, subject_line, preview_text) => {
     const segmentId = await getSegmentIdOfDay(dayMoment)
     if (!segmentId) return false
-    const campaignId = await createCampaign(segmentId,templateId)
+    const campaignId = await createCampaign(segmentId,templateId,subject_line,preview_text)
     if (!campaignId){
         return console.error('Invalid campaign id')
     }
@@ -142,7 +142,7 @@ const sendCampaign = async (campaignId) => {
     }
 };
 
-const createCampaign = async (segmentId, templateId) => {
+const createCampaign = async (segmentId, templateId, subject_line, preview_text) => {
     try{
     const response = await client.campaigns.create({
         type: "regular",
@@ -153,9 +153,9 @@ const createCampaign = async (segmentId, templateId) => {
             }
         },
         settings:{
-            subject_line:'Terramia Vzorky',
+            subject_line:subject_line,
             title:'Terramia Vzorky kampaň',
-            preview_text:'Nadväzujúca kampaň pre členov, ktorí si objednali vzorky',
+            preview_text:preview_text,
             from_name:'Terramia',
             use_conversation:false,
             auto_footer:true,
