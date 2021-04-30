@@ -398,7 +398,8 @@ const createBlogValidation = (req,res) => {
         draft: Joi.boolean(),
         type:Joi.number().required(),
         locked:Joi.boolean(),
-        link:Joi.string()
+        link:Joi.string(),
+        visible:Joi.boolean()
     })
     return validate(req,res,Joischema)
 }
@@ -411,7 +412,8 @@ const patchBlogValidation = (req,res) => {
         draft: Joi.boolean(),
         type:Joi.number().required(),
         locked:Joi.boolean(),
-        link:Joi.string()
+        link:Joi.string(),
+        visible:Joi.boolean()
     })
     return validate(req,res,Joischema)
 }
@@ -423,7 +425,8 @@ const getFilteredBlogsValidation = (req,res) => {
             locked: Joi.boolean(),
             draft: Joi.boolean(),
             type: Joi.number(),
-            link:Joi.string()
+            link:Joi.string(),
+            visible:Joi.boolean()
         }),
         sortBy: Joi.object({
             date: Joi.number().valid(-1,1)
