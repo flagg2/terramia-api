@@ -31,15 +31,15 @@ const emailJob = async () => {
         console.error('Error sending the 14 day email')
     }
     const ago21 = moment().subtract(21,'days')
-    const suc3 = await createAndSendCampaign(ago21,templateId21,'Balík olejov a 7 darčekov 😍','Získajte more darčekov a zľavu 25%🍀')
+    const suc3 = await createAndSendCampaign(ago21,templateId21,'Balíky olejov s darčekmi 😍','Získajte zaujímavé darčeky a zľavu 25%🍀')
     if (!suc3){
         console.error('Error sending the 21 day email')
     }
-    /*const ago28 = moment().subtract(28,'days')
+    const ago28 = moment().subtract(28,'days')
     const suc4 = await createAndSendCampaign(ago28,templateId28,'Ktoré oleje sú pre Vás najvhodnejšie?😱','Vyplňte rýchly dotazník a vyberte si riešenie podľa seba!😍')
     if (!suc4){
         console.error('Error sending the 14 day email')
-    }*/
+    }
 }
 
 const job = new CronJob('0 0 */1 * *', async function () {
