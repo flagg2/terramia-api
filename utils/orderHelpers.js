@@ -34,6 +34,7 @@ const calculateAddedCosts = async (order, shouldDeliver, paymentType, applyDisco
     const pod = await Product.findOne({name:'Dobierka'})
     const delivery = await Product.findOne({name:'Doprava'})
     const doterraDelivery = await Product.findOne({name:'Doprava2'})
+
     if (areAllProductsDoterra){
         if (points < 100){
             if (paymentType=='cash'){
@@ -62,11 +63,18 @@ const calculateAddedCosts = async (order, shouldDeliver, paymentType, applyDisco
         }
     }
     else{
-        if (shouldDeliver){
-            addIfNotIncluded(order,delivery)
-        }
-        if (paymentType=='cash'){
-            addIfNotIncluded(order,pod)
+        if (!valuePackage){
+            if (applyDiscount){
+                addIfNotIncluded(order,doterraDelivery)
+            }
+            else{
+                if (shouldDeliver){
+                    addIfNotIncluded(order,delivery)
+                }
+                if (paymentType=='cash'){
+                    addIfNotIncluded(order,pod)
+                }
+            }
         }
     }
     order.markModified('products')
