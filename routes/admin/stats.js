@@ -12,10 +12,14 @@ const {
 const {getStatsFromTimespan} = require('../../utils/statHelpers')
 
 module.exports = (router) => {
-    router.all("/stats",methods(['POST']))
-    router.post("/stats",verify(1),async (req,res) =>
+    router.all("/stats",methods(['GET']))
+    router.get("/stats",verify(1),async (req,res) =>
     {
-        if (getStatsValidation(req,res)) return
+        if (!['day','week','month','year','all'].includes(req.query.timespan) && !/^[0-3][0-9]\/[0-1][0-9]\/[0-9]{4}:[0-3][0-9]\/[0-1][0-9]\/[0-9]{4}$/.test(req.query.timespan) && req.query.timespan!=undefined) return res.status(400).send({
+            message:'Provided timespan is invalid',
+            messageSK:'Zadaný časový okruh nie je valídny',
+            error:'format'
+        })
         try {
             const stats = await getStatsFromTimespan(req.body.timespan)
             return res.send({
