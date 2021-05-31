@@ -445,6 +445,18 @@ const getStatsValidation = (req,res) => {
     return validate(req,res,Joischema)
 }
 
+const createExcelValidation = (req,res) => {
+    const Joischema = Joi.object({
+        mode: Joi.string().valid('simple','complex').required(),
+        filters: Joi.object({
+            status: Joi.string().valid('ordered','fulfilled','pending','cancelled','sent'),
+            value:Joi.number().min(0),
+            valueOverZero:Joi.boolean()
+        })
+    })
+    return validate(req,res,Joischema)
+}
+
 module.exports = {
     createBlogValidation,
     patchBlogValidation,
@@ -456,6 +468,7 @@ module.exports = {
     billingRegisterValidation,
     finishRegisterValidation,
     getFilteredOrdersValidation,
+    createExcelValidation,
     loginValidation,
     patchProfileValidation,
     patchProductValidation,

@@ -15,6 +15,7 @@ const {
     idValidation,
     getFilteredOrdersValidation,
     emailBundleValidation,
+    createExcelValidation,
 } = require('../../utils/validation')
 
 const sendEmail = async (emailArray)=>{
@@ -99,9 +100,10 @@ router.post('/orders',verify(1), async (req,res) => {
 router.all("/orders/createExcel",methods(['POST']))
 router.post("/orders/createExcel",verify(1),async (req,res) =>
 {
+    if (createExcelValidation(req,res)) return
     try {
         const eg = new ExcelGenerator()
-        const name = await eg.generateExcel()
+        const name = await eg.generateExcel(req.body.mode, req.body.filters)
         return res.send({
             message:'Excel file created successfully',
             path : `${name}.xlsx`
