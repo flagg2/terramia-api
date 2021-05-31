@@ -221,7 +221,8 @@ const orderValidation = (req, res) => {
         }),
         buyingAsCompany : Joi.boolean(),
         birthDate: Joi.string(),
-        note: Joi.string()
+        note: Joi.string(),
+        code: Joi.boolean()
     })
     try {
         if (!mongoose.Types.ObjectId.isValid(req.body.userId)) {
@@ -439,7 +440,7 @@ const getFilteredBlogsValidation = (req,res) => {
 
 const getStatsValidation = (req,res) => {
     const Joischema = Joi.object({
-        timespan: Joi.string().valid('day','week','month','year').required()
+        timespan: Joi.string().valid('day','week','month','year','all').required()
     })
     return validate(req,res,Joischema)
 }

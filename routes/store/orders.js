@@ -24,6 +24,12 @@ module.exports = (router) => {
         if (req.user) req.body.userId = req.user._id
         if (orderValidation(req, res)) return
         try {
+            if (req.body.code !== undefined){
+                if (req.body.code == process.env.ACTION_CODE){
+                    req.body.action = true
+                }
+                delete req.body.code
+            }
             if (!req.body.userId) {
                 return res.status(400).send({
                     error: 'no-user',

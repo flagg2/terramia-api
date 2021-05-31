@@ -19,6 +19,9 @@ const orderSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    dateFulfilled: {
+        type: Date
+    },
     status:{
         type: String,
         default: 'pending'
@@ -69,6 +72,10 @@ const orderSchema = new mongoose.Schema({
     },
     note:{
         type:String
+    },
+    action: {
+        type: Boolean,
+        default:false
     }
 })
 

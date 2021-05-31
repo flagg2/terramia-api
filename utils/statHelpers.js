@@ -25,9 +25,10 @@ const getStatsFromTimespan = async (timespan) => {
         let [sday,smonth,syear] = startDay.split('/')
         let [eday,emonth,eyear] = endDay.split('/')
         start = new Date(syear,smonth-1,sday)
-        end = new Date(eyear,emonth-1,eday)
+        end = new Date(eyear,emonth-1,eday).setHours(23,59,59,999)
     }
 
+    //users who recieved samples
     const sampled = await Order.aggregate([{
         $match:{
             value:0
@@ -51,9 +52,72 @@ const getStatsFromTimespan = async (timespan) => {
         $unwind: '$email'
     }])
 
-    const emailSet = new Set()
+    //users who were registered and are friends of terramia team
+    const withAction = await Order.aggregate([{
+        $match:{
+            date: {
+                $lte: new Date(end),
+                $gte: new Date(start)
+            },
+            value: {
+                $gt : 0,
+            },
+            action:true
+        }
+    },{
+        $lookup:{
+            from: 'users',
+            localField: 'orderedBy',
+            foreignField: '_id',
+            as:'user'
+        }
+    },{
+        $addFields: {
+            'email' : '$user.email'
+        }
+    },{
+        $project: {
+            "email" : 1
+        }
+    },{
+        $unwind: '$email'
+    }])
+
+    //users who registered and are not friends of terramia team
+    console.log(end,start)
+    const withoutAction = await Order.aggregate([{
+        $match:{
+            date: {
+                $lte: new Date(end),
+                $gte: new Date(start)
+            },
+            value: {
+                $gt : 0,
+            },
+            $or: [{action: {$exists : false}},{action : false}]
+        }
+    },{
+        $lookup:{
+            from: 'users',
+            localField: 'orderedBy',
+            foreignField: '_id',
+            as:'user'
+        }
+    },{
+        $addFields: {
+            'email' : '$user.email'
+        }
+    },{
+        $project: {
+            "email" : 1
+        }
+    },{
+        $unwind: '$email'
+    }])
+
+    const sampledEmailsSet = new Set()
     for (const user of sampled){
-        emailSet.add(user.email)
+        sampledEmailsSet.add(user.email)
     }
     
     const emails = await EmailBundle.find({
@@ -72,30 +136,40 @@ const getStatsFromTimespan = async (timespan) => {
         }
     })
 
-    console.log(emails)
+    let terramiaNetSampled = 0
+    let withActionSampled = 0
+    let withoutActionSampled = 0
 
-    const stats = {
-        terramia: 0,
-        terramia_net: 0,
-        total:0,
-        samples:samples.length
+    for (const email of withAction){
+        if (sampledEmailsSet.has(email)){
+            withActionSampled += 1
+        }
+    }
+
+    for (const email of withoutAction){
+        if (sampledEmailsSet.has(email)){
+            withoutActionSampled += 1
+        }
     }
 
     for (const emailBundle of emails){
         stats.total += emailBundle.terramia.length
-        for (const email of emailBundle.terramia){
-            if (emailSet.has(email)){
-                stats.terramia += 1
-                stats.terramia_net += 1
-            }
-        }
         for (const email of emailBundle.terramia_net){
-            if (emailSet.has(email)){
-                stats.terramia_net += 1
-                stats.total += 1
+            if (sampledEmailsSet.has(email)){
+                terramiaNetSampled += 1
             }
         }
     }
+
+    const stats = {
+        kpi: withoutAction.length,
+        kpi_net: withoutAction.length + terramiaNetSampled,
+        manual: withAction.length,
+        kpi_sample: withActionSampled + withoutActionSampled,
+        kpi_net_plus_manual: withoutAction.length + terramiaNetSampled + withAction.length,
+        sampled: samples.length
+    }
+
     return stats
 }
 

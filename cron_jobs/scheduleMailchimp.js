@@ -182,7 +182,7 @@ const getTodaysEmailAddresses = async () => {
     const ago1 = moment().subtract(1,'days')
     console.log(today,ago1)
     const orders = await Order.find({
-        date: {
+        dateFulfilled: {
             $lt: today.toDate(),
             $gte: ago1.toDate(),
         },

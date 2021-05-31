@@ -141,6 +141,7 @@ router.post('/orders/:id/fulfill',verify(1),async (req,res) => {
         if (order.status == 'fulfilled') return res.status(400).send({message:'The order has already been fulfileld',error:'fulfilled'})
         if (order.status == 'cancelled') return res.status(400).send({message:'The order has already been cancelled',error:'cancelled'})
         order.status = 'fulfilled'
+        order.dateFulfilled = new Date()
         const user = await User.findById(order.orderedBy)
         await sendOrderProcessedMail(user.email,order)
         await order.save()
