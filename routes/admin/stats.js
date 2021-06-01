@@ -21,7 +21,7 @@ module.exports = (router) => {
             error:'format'
         })
         try {
-            const stats = await getStatsFromTimespan(req.body.timespan)
+            const stats = await getStatsFromTimespan(req.query.timespan)
             return res.send({
                 message:'Stats retrieved successfully',
                 stats:stats
