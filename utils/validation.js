@@ -123,7 +123,8 @@ const getFilteredOrdersValidation = (req, res) => {
             status: Joi.string().valid('ordered','fulfilled','pending','cancelled','sent'),
             orderedBy: Joi.string().max(20),
             value:Joi.number().min(0),
-            valueOverZero:Joi.boolean()
+            valueOverZero:Joi.boolean(),
+            applyDiscount: Joi.boolean()
         }),
         sortBy: Joi.object({
             value: Joi.number().valid(-1, 1),
@@ -451,7 +452,8 @@ const createExcelValidation = (req,res) => {
         filters: Joi.object({
             status: Joi.string().valid('ordered','fulfilled','pending','cancelled','sent'),
             value:Joi.number().min(0),
-            valueOverZero:Joi.boolean()
+            valueOverZero:Joi.boolean(),
+            applyDiscount: Joi.boolean()
         })
     })
     return validate(req,res,Joischema)
