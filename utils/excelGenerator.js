@@ -95,9 +95,15 @@ module.exports = class ExcelGenerator {
 
     async renderFullOrders(filters){
         try{
-            const orders = await Order.find({
-                ...filters
-            })
+            const valOverZero = filters.valueOverZero
+            if (filters) delete filters.valueOverZero
+            let orders
+            if (valOverZero){
+                orders = await Order.find({...filters, value : {$gt:0}})
+            }
+            else{
+                orders = await Order.find(filters)
+            }
             this.head = {
                 yellow: ['Meno', 'Dátum objednávky','Čas','Email','Tel. číslo','Dátum narodenia','Adresa','PSČ','Mesto','Krajina','Doručenie','Platba','Na firmu','Produkty','Cena']
             }
