@@ -59,10 +59,14 @@ const getStatsFromTimespan = async (timespan) => {
                 $lte: new Date(end),
                 $gte: new Date(start)
             },
+            applyDiscount: true,
             value: {
                 $gt : 0,
             },
-            action:true
+            status:{
+                $not: {$eq:'pending'}
+            },
+            action: true
         }
     },{
         $lookup:{
@@ -93,6 +97,10 @@ const getStatsFromTimespan = async (timespan) => {
             },
             value: {
                 $gt : 0,
+            },
+            applyDiscount: true,
+            status:{
+                $not: {$eq:'pending'}
             },
             $or: [{action: {$exists : false}},{action : false}]
         }
@@ -153,7 +161,6 @@ const getStatsFromTimespan = async (timespan) => {
     }
 
     for (const emailBundle of emails){
-        stats.total += emailBundle.terramia.length
         for (const email of emailBundle.terramia_net){
             if (sampledEmailsSet.has(email)){
                 terramiaNetSampled += 1
