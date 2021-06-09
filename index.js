@@ -26,13 +26,15 @@ const statusRoute = require('./routes/status/status')
 
 //Connect to DB
 let key, cert, options
-if (process.env.IS_PRODUCTION == 'true'){
-key = fs.readFileSync('/etc/webmin/webmin/coronashop.store.key');
-cert = fs.readFileSync('/etc/webmin/webmin/coronashop.store.cert');
-options = {
-  key: key,
-  cert: cert
-};
+if(process.env.IS_PRODUCTION == 'true') {
+  key = fs.readFileSync(`${process.env.CERT_DIR}/privkey.pem`);
+  cert = fs.readFileSync(`${process.env.CERT_DIR}/cert.pem`);
+  ca = fs.readFileSync(`${process.env.CERT_DIR}/chain.pem`);
+  options = {
+    key: key ?? "",
+    cert: cert ?? "",
+    ca: ca ?? ""
+  };
 }
 
 require('./utils/DBconfig')
