@@ -21,5 +21,5 @@ const job = new CronJob("0 17 */1 * *", async function () {
          }
       }
    }
-});
+})();
 job.start();
