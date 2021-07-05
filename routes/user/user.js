@@ -168,10 +168,10 @@ router.post("/track", async (req, res) => {
       if (!user.emailClicksCount) user.emailClicksCount = 0;
       if (user.emailClicks[req.body.url]) {
          user.emailClicks[req.body.url]++;
-         user.markModified("emailClicks");
       } else {
          user.emailClicks[req.body.url] = 1;
       }
+      user.markModified("emailClicks");
       user.emailClicksCount++;
       await user.save();
       res.send({
