@@ -84,6 +84,7 @@ router.post("/skip", async (req, res) => {
       const orderAmount = await calculateOrderAmount(order);
       order.value = orderAmount;
       await order.save();
+      await user.save();
       finishOrder(order, res, false);
       res.send({
          message: "Payment skipped successfully",
