@@ -65,7 +65,7 @@ router.post("/skip", async (req, res) => {
          const today = moment();
          const user = await User.findById(order.orderedBy);
          if (user.receivedSamples) {
-            return res.status(404).send({
+            return res.status(409).send({
                message: "Tento použivateľ už vzorky obdržal",
             });
          } else if (user.registeredInDoTerra) {
