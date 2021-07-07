@@ -82,7 +82,6 @@ app.use("/api/payments", paymentRoute);
 app.use("/api/contact", contactRoute);
 app.use("/api/status", statusRoute);
 app.use("*", notFoundRoute);
-//require('./utils/merchantFeedGenerator')
 
 //require('./utils/createAccounts')
 if (process.env.IS_PRODUCTION == "true") {
