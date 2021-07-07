@@ -153,17 +153,17 @@ const getStatsFromTimespan = async (timespan) => {
       includeInStats: true,
    });
 
-   const samples = await Order.find({
-      value: 0,
-      date: {
-         $lte: new Date(end).setHours(23, 59, 59, 999),
-         $gte: new Date(start),
-      },
-   });
+   for (const email of withAction) {
+      if (sampledEmailsSet.has(email.email)) {
+         withActionSampled += 1;
+      }
+   }
 
-   let terramiaNetSampled = 0;
-   let withActionSampled = 0;
-   let withoutActionSampled = 0;
+   for (const email of withoutAction) {
+      if (sampledEmailsSet.has(email.email)) {
+         withoutActionSampled += 1;
+      }
+   }
 
    for (const email of withAction) {
       if (sampledEmailsSet.has(email)) {
