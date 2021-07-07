@@ -149,13 +149,13 @@ const getStatsFromTimespan = async (timespan) => {
     let withoutActionSampled = 0
 
     for (const email of withAction){
-        if (sampledEmailsSet.has(email)){
+        if (sampledEmailsSet.has(email.email)){
             withActionSampled += 1
         }
     }
 
     for (const email of withoutAction){
-        if (sampledEmailsSet.has(email)){
+        if (sampledEmailsSet.has(email.email)){
             withoutActionSampled += 1
         }
     }
